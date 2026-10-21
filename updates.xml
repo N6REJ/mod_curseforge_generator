@@ -18,6 +18,6 @@
       <tag>generator</tag>
     </tags>
     <targetplatform name="joomla" version="(5|6).*" />
-    <sha256>1ec9c722c66d69e1f141ef08444e7dcf04803f8656480ecc48f37f7672d72b89</sha256>
+    <sha256>f49114795fe65a19ebdafb451e68e28e201b4ada7390d1f67c9289d3803e79a6</sha256>
   </update>
 </updates>
