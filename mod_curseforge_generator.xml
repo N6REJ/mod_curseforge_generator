@@ -24,7 +24,7 @@
 	</files>
 
 	<media destination="mod_curseforge_generator" folder="media">
-		<filename>joomla.asset.json</filename>
+		<filename>mod_curseforge_generator.asset.json</filename>
 		<folder>css</folder>
 		<folder>js</folder>
 	</media>
