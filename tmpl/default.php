@@ -16,25 +16,6 @@ use Joomla\CMS\Router\Route;
 // AJAX endpoint URL
 $ajaxUrl = Route::_('index.php?format=json&xajax=1', false);
 
-// Read URL parameters for pre-filling the form
-$input = Factory::getApplication()->input;
-$urlMetric = $input->get('badge-metric', '', 'STRING');
-$urlColor  = $input->get('badge-color', '', 'STRING');
-$urlLabel  = $input->get('badge-label', '', 'STRING');
-$urlTab    = $input->get('tab', 'badge', 'STRING');
-
-// 3. Modern data-passing (Safe, CSP-compliant)
-Factory::getApplication()->getDocument()->addScriptOptions('mod_curseforge_generator', [
-	'defaultOwner'  => $defaultOwner ?? '',  // Null coalescing to prevent undefined notices
-	'defaultRepo'   => $defaultRepo ?? '',
-	'defaultBranch' => $defaultBranch ?? '',
-	'defaultStyle'  => $defaultStyle ?? '',
-	'ajaxUrl'       => $ajaxUrl,
-	'urlMetric'     => $urlMetric,
-	'urlColor'      => $urlColor,
-	'urlLabel'      => $urlLabel,
-	'urlTab'        => $urlTab,
-]);
 ?>
 
 <div class="mod-curseforge-generator <?php echo htmlspecialchars($params->get('moduleclass_sfx', '')); ?>">
@@ -161,7 +142,7 @@ Factory::getApplication()->getDocument()->addScriptOptions('mod_curseforge_gener
                             <button type="button" class="btn btn-primary btn-sm" data-copy="curseforge-badge-md">
                                 <?php echo Text::_('MOD_curseforge_GENERATOR_COPY_BADGE_MD'); ?>
                             </button>
-                            <button type="button" class="btn btn-outline-primary btn-sm" data-copy="curseforge-badge-url">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" data-copy="curseforge-badge-url">
                                 <?php echo Text::_('MOD_curseforge_GENERATOR_COPY_BADGE_URL'); ?>
                             </button>
                         </div>
@@ -234,7 +215,7 @@ Factory::getApplication()->getDocument()->addScriptOptions('mod_curseforge_gener
                             <button type="button" class="btn btn-primary btn-sm" data-copy="curseforge-chart-md">
                                 <?php echo Text::_('MOD_curseforge_GENERATOR_COPY_CHART_MD'); ?>
                             </button>
-                            <button type="button" class="btn btn-outline-primary btn-sm" data-copy="curseforge-chart-url">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" data-copy="curseforge-chart-url">
                                 <?php echo Text::_('MOD_curseforge_GENERATOR_COPY_CHART_URL'); ?>
                             </button>
                         </div>
