@@ -168,9 +168,12 @@
       credentials: "same-origin"
     })
     .then(function (response) {
-      return response.text();
+      return response.text().then(function (text) {
+        return { status: response.status, text: text };
+      });
     })
-    .then(function (text) {
+    .then(function (result) {
+      var text = result.text;
       // Joomla wraps JSON in the message queue; try to parse
       var data;
       try {
@@ -181,7 +184,7 @@
         if (match) {
           data = JSON.parse(match[0]);
         } else {
-          throw new Error("Invalid JSON response");
+          throw new Error("Invalid JSON response (HTTP " + result.status + "): " + text.substring(0, 200));
         }
       }
 

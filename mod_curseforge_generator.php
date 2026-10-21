@@ -29,7 +29,9 @@ $doc->addStyleSheet($mediaUrl . 'css/curseforge-generate.css');
 $doc->addScript($mediaUrl . 'js/curseforge-generator.js', [], ['defer' => true]);
 
 // 4. Generate URL endpoints and capture URL state params
-$ajaxUrl   = Route::_('index.php?option=com_ajax&module=curseforge_generator&format=raw', false);
+$activeMenu = Factory::getApplication()->getMenu()->getActive();
+$itemId     = $activeMenu ? (int) $activeMenu->id : 0;
+$ajaxUrl    = Route::_('index.php?option=com_ajax&module=curseforge_generator&format=raw&Itemid=' . $itemId, false);
 $urlMetric = $input->get('badge-metric', '', 'STRING');
 $urlColor  = $input->get('badge-color', '', 'STRING');
 $urlLabel  = $input->get('badge-label', '', 'STRING');
