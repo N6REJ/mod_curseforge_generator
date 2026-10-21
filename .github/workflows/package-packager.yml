@@ -18,7 +18,7 @@ jobs:
           token: ${{ secrets.GH_PAT }}
 
       - name: Joomla Extension Packager
-        uses: N6REJ/joomla-packager@latest
+        uses: N6REJ/joomla-packager@main
         id: package
         with:
           extension-name: 'mod_curseforge_generator'
