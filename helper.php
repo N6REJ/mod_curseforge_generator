@@ -7,13 +7,11 @@
  * @link        https://github.com/N6REJ/curseforge-downloads-action
  */
 
-namespace Joomla\Module\CurseforgeGenerator\Site\Helper;
-
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 
-class CurseforgeGeneratorHelper
+class ModCurseforge_generatorHelper
 {
     private const SAFE_SLUG  = '/^[A-Za-z0-9_.-]+$/';
     private const SAFE_PATH  = '/^[A-Za-z0-9_.\-\/]+$/';
@@ -140,14 +138,14 @@ class CurseforgeGeneratorHelper
      *
      * @return  string
      */
-    public function getAjax()
+    public static function getAjax()
     {
         $app   = Factory::getApplication();
         $input = $app->input;
 
-        $post  = $input->post;
-        $owner = $post->get('owner', '', 'STRING');
-        $repo  = $post->get('repo', '', 'STRING');
+        $post   = $input->post;
+        $owner  = $post->get('owner', '', 'STRING');
+        $repo   = $post->get('repo', '', 'STRING');
         $branch = $post->get('branch', '', 'STRING');
         $jsonPath = $post->get('jsonpath', 'curseforge/downloads.json', 'STRING');
 

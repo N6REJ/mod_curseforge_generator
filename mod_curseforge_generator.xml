@@ -14,11 +14,10 @@
 		<joomla version="5.0" />
 	</dependencies>
 
-	<namespace path="src">Joomla\Module\CurseforgeGenerator</namespace>
 
 	<files>
 		<filename module="mod_curseforge_generator">mod_curseforge_generator.php</filename>
-		<folder>src</folder>
+		<filename>helper.php</filename>
 		<folder>tmpl</folder>
 		<folder>media</folder>
 		<folder>language</folder>
