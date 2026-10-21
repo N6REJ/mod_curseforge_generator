@@ -13,16 +13,6 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 
-// 1. Get the Web Asset Manager instance
-$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-
-// 2. Register and enforce your asset dependencies natively
-// (Make sure 'mod_curseforge_generator' is defined in your joomla.asset.json)
-$wa->usePreset('mod_curseforge_generator');
-
-// If you need to force Bootstrap scripts to load as well, uncomment the line below:
-// $wa->useAsset('script', 'bootstrap.dropdown');
-
 // AJAX endpoint URL
 $ajaxUrl = Route::_('index.php?format=json&xajax=1', false);
 

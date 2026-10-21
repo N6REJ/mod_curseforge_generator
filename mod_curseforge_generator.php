@@ -20,11 +20,18 @@ $defaultRepo   = $params->get('default_repo', 'curseforge-downloads-action');
 $defaultBranch = $params->get('default_branch', 'stats-data');
 $defaultStyle  = $params->get('default_style', 'flat-square');
 
-// 3. Directly load files (Bypasses all JSON asset files and registry lookups completely)
+// 3. Load Bootstrap 5 only if the site template has not already loaded it
 $doc = Factory::getApplication()->getDocument();
+$wa  = $doc->getWebAssetManager();
+
+if (!$wa->isAssetActive('style', 'bootstrap.css') && $wa->assetExists('preset', 'bootstrap'))
+{
+    $wa->usePreset('bootstrap');
+}
+
+// Load all module assets directly from this file
 $mediaUrl = Joomla\CMS\URI\URI::root() . 'media/mod_curseforge_generator/';
 
-// Inject asset files directly into the template document header structure
 $doc->addStyleSheet($mediaUrl . 'css/curseforge-generate.css');
 $doc->addScript($mediaUrl . 'js/curseforge-generator.js', [], ['defer' => true]);
 
