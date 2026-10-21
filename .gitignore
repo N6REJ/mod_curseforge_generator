@@ -1,0 +1,22 @@
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor files
+*.bak
+*.orig
+*.swp
+*.swo
+*.tmp
+*~
+.vscode/
+.idea/
+.qodo/
+
+# Build artifacts
+build/
+*.zip
+
+# Local documentation (not committed)
+docs/

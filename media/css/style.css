@@ -1,0 +1,182 @@
+/*
+  CurseForge Downloads Action - Badge & Chart Generator Styles
+  ------------------------------------------------------------------
+  Load this file in a Joomla Custom HTML module or template:
+    <link rel="stylesheet" href="/path/to/cfdg-styles.css" />
+*/
+.cfdg {
+  max-width: 900px;
+  margin: 0 auto;
+  font: 15px/1.5 system-ui, Segoe UI, Arial, sans-serif;
+  color: #1f2933;
+}
+.cfdg a { color: #0a7ea4; }
+.cfdg .cfdg-intro { margin: 0 0 1rem; }
+.cfdg .cfdg-form { display: block; }
+.cfdg fieldset.card {
+  border: 1px solid #d9e2ec;
+  border-radius: 10px;
+  padding: 0.75rem 1rem 1rem;
+  margin: 0 0 1rem;
+  background: #fff;
+  box-shadow: none;
+}
+.cfdg fieldset.card legend {
+  font-size: inherit;
+  float: none;
+  width: auto;
+  padding: 0;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+.cfdg fieldset.card .fw-semibold { color: #486581; }
+.cfdg .form-label {
+  font-size: 0.8rem;
+  color: #52606d;
+  margin-bottom: 0.25rem;
+  font-weight: 400;
+}
+.cfdg .form-control, .cfdg .form-select {
+  padding: 0.5rem 0.6rem;
+  border: 1px solid #bcccdc;
+  border-radius: 8px;
+  font: inherit;
+  background-color: #fff;
+  background-image: none;
+  color: inherit;
+  line-height: 1.5;
+  box-shadow: none;
+}
+.cfdg .form-select {
+  padding-right: 2rem;
+}
+.cfdg .form-control:focus, .cfdg .form-select:focus {
+  border-color: #0a7ea4;
+  box-shadow: 0 0 0 0.2rem rgba(10, 126, 164, 0.15);
+}
+.cfdg .form-check {
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.cfdg .form-check-input {
+  margin: 0;
+  flex-shrink: 0;
+}
+.cfdg .form-check-label {
+  font-size: 0.85rem;
+  color: #52606d;
+  margin-bottom: 0;
+}
+.cfdg .cfdg-output h3 {
+  margin: 1.2rem 0 0.4rem;
+  font-size: 1rem;
+  color: #243b53;
+  font-weight: 600;
+}
+.cfdg .cfdg-divider {
+  border: none;
+  border-top: 2px solid #d9e2ec;
+  margin: 1.5rem 0 1.2rem;
+}
+.cfdg .cfdg-code {
+  background: #f0f4f8;
+  border: 1px solid #d9e2ec;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+  margin: 0 0 0.5rem;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+.cfdg .cfdg-code code {
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 0.85rem;
+  color: #102a43;
+}
+.cfdg .cfdg-url {
+  opacity: 0.85;
+  font-size: 0.8rem;
+}
+.cfdg .cfdg-url code {
+  font-size: 0.8rem;
+}
+.cfdg .btn-primary {
+  border-color: #0a7ea4;
+  background-color: #0a7ea4;
+  border-radius: 8px;
+  padding: 0.45rem 0.8rem;
+  font: inherit;
+  color: #fff;
+  box-shadow: none;
+}
+.cfdg .btn-primary:hover {
+  background-color: #086587;
+  border-color: #086587;
+  color: #fff;
+}
+.cfdg .btn-outline-primary {
+  color: #0a7ea4;
+  border-color: #0a7ea4;
+  border-radius: 8px;
+  padding: 0.45rem 0.8rem;
+  font: inherit;
+  background-color: transparent;
+  box-shadow: none;
+}
+.cfdg .btn-outline-primary:hover {
+  background-color: #0a7ea4;
+  color: #fff;
+  border-color: #0a7ea4;
+}
+.cfdg .btn-sm {
+  font-size: 0.85rem;
+}
+.cfdg .cfdg-preview {
+  margin: 0 0 0.5rem;
+  min-height: 60px;
+  border: 2px dashed #bcccdc;
+  border-radius: 10px;
+  background: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  position: relative;
+}
+.cfdg .cfdg-preview img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+.cfdg .cfdg-preview-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: #8495a7;
+  font-size: 0.9rem;
+  width: 100%;
+  min-height: 50px;
+}
+.cfdg .cfdg-placeholder-icon {
+  width: 48px;
+  height: 48px;
+  opacity: 0.5;
+}
+.cfdg .cfdg-badge-placeholder span {
+  font-size: 0.85rem;
+}
+.cfdg .cfdg-chart-placeholder span {
+  font-size: 0.85rem;
+}
+.cfdg .cfdg-status {
+  min-height: 1.2rem;
+  font-size: 0.85rem;
+  color: #1e8e3e;
+}
+.cfdg .cfdg-status.cfdg-error { color: #b3261e; }
