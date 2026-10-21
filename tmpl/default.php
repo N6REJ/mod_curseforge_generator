@@ -45,7 +45,6 @@ Factory::getApplication()->getDocument()->addScriptOptions('mod_curseforge_gener
 	'urlLabel'      => $urlLabel,
 	'urlTab'        => $urlTab,
 ]);
-
 ?>
 
 <div class="mod-curseforge-generator <?php echo htmlspecialchars($params->get('moduleclass_sfx', '')); ?>">
