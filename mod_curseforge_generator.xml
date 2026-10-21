@@ -3,11 +3,11 @@
 	<name>MOD_curseforge_GENERATOR</name>
 	<author>N6REJ</author>
 	<creationDate>2026 October 21</creationDate>
-	<copyright>Copyright (C) 2026 N6REJ</copyright>
+	<copyright>Copyright (C) 2025 - 2026 N6REJ</copyright>
 	<license>MIT License</license>
 	<authorEmail>n6rej@protonmail.com</authorEmail>
 	<authorUrl>https://github.com/N6REJ</authorUrl>
- <version>2026.10.23</version>
+ <version>2026.10.21.1</version>
 	<description>MOD_curseforge_GENERATOR_DESC</description>
 	<dependencies>
 		<php version="8.1" />
