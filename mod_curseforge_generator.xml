@@ -32,7 +32,7 @@
 		<language tag="en-GB">language/en-GB/mod_curseforge_generator.sys.ini</language>
 	</languages>
 	<updateservers>
-		<server type="extension" priority="1" name="curseforge Generator Updates">https://raw.githubusercontent.com/Bearsampp/mod_curseforge_generator/main/updates.xml</server>
+		<server type="extension" priority="1" name="curseforge Generator Updates">https://raw.githubusercontent.com/N6REJ/mod_curseforge_generator/main/updates.xml</server>
 	</updateservers>
 
 	<config>

@@ -32,7 +32,7 @@ class ModcurseforgeGeneratorHelper
         $owner = preg_replace('#^(?:https?://)?(?:www\.)?github\.com/#i', '', $owner);
         $owner = explode('/', trim($owner, '/ '))[0];
 
-        return $owner !== '' ? $owner : 'Bearsampp';
+        return $owner !== '' ? $owner : 'N6REJ';
     }
 
     /**

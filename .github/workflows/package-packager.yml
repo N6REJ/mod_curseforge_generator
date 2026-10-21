@@ -18,7 +18,7 @@ jobs:
           token: ${{ secrets.GH_PAT }}
 
       - name: Joomla Extension Packager
-        uses: N6REJ/joomla-packager@2026.10.17.2 # 2026.10.17.2 - fixes inline SHA-256 cleanup to preserve feed XML
+        uses: N6REJ/joomla-packager@2026.10 # 2026.10 - fixes inline SHA-256 cleanup to preserve feed XML
         id: package
         with:
           extension-name: 'mod_curseforge_generator'
@@ -31,8 +31,8 @@ jobs:
           extension-client: 'site'
           targetplatform-name: 'joomla'
           targetplatform-version: '(5|6).*'
-          author: 'Bearsampp'
-          copyright-holder: 'Bearsampp'
+          author: 'N6REJ'
+          copyright-holder: 'N6REJ'
           copyright-start-year: '2025'
           license-file: 'LICENSE'
           update-joomla-server: 'true'
@@ -48,5 +48,5 @@ jobs:
         with:
           name: mod_curseforge_generator_${{ steps.package.outputs.version }}
           path: ${{ steps.package.outputs.package-path }}
-          retention-days: 90
+          retention-days: 180
           if-no-files-found: warn

@@ -35,7 +35,7 @@ This module lets visitors generate CurseForge badge and chart URLs directly on y
 
 ### Via Joomla Extension Manager (Recommended)
 
-1. Download the latest ZIP package from the [Releases](https://github.com/Bearsampp/mod_curseforge_generator/releases) page.
+1. Download the latest ZIP package from the [Releases](https://github.com/N6REJ/mod_curseforge_generator/releases) page.
 2. In Joomla Admin → System → Install → Extensions → Upload Package File and upload the ZIP.
 3. Go to Content → Site Modules → + New → "CurseForge Badge & Chart Generator", publish to a position, assign to menu items, and Save.
 
