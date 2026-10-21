@@ -13,11 +13,10 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 
-// Load Web Assets - Bootstrap 5 preset + module-specific assets
+// Load Web Assets using the module's Web Asset library
 $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-$wa->usePreset('bootstrap');
-$wa->registerAndUseStyle('mod_curseforge_generator.style', 'mod_curseforge_generator/style.css', [], [], ['bootstrap']);
-$wa->registerAndUseScript('mod_curseforge_generator.script', 'mod_curseforge_generator/curseforge-generator.js', [], ['defer' => true], ['bootstrap', 'core']);
+$wa->getRegistry()->addExtensionRegistryFile('mod_curseforge_generator');
+$wa->use('mod_curseforge_generator');
 
 // AJAX endpoint URL
 $ajaxUrl = Route::_('index.php?format=json&xajax=1', false);

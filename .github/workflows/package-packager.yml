@@ -25,12 +25,11 @@ jobs:
           extension-xml: 'mod_curseforge_generator.xml'
           extension-type: 'module'
           # Feed matching: Joomla silently ignores entries missing client or
-          # targetplatform. Match Joomla 5 and 6 so J5.4 installs are offered
-          # the update too; only applied when updates.xml does not already
-          # declare them.
+          # targetplatform.
           extension-client: 'site'
           targetplatform-name: 'joomla'
-          targetplatform-version: '(5|6).*'
+          targetplatform-version: '(6).*'
+
           author: 'N6REJ'
           copyright-holder: 'N6REJ'
           copyright-start-year: '2026'

@@ -7,11 +7,11 @@
 	<license>MIT License</license>
 	<authorEmail>n6rej@protonmail.com</authorEmail>
 	<authorUrl>https://github.com/N6REJ</authorUrl>
- <version>2026.10.21.1</version>
+ <version>2026.10.22</version>
 	<description>MOD_curseforge_GENERATOR_DESC</description>
 	<dependencies>
-		<php version="8.1" />
-		<joomla version="5.0" />
+		<php version="8.3" />
+		<joomla version="6.0" />
 	</dependencies>
 
 	<files>
@@ -23,6 +23,7 @@
 	</files>
 
 	<media destination="mod_curseforge_generator" folder="media">
+		<filename>joomla.asset.json</filename>
 		<folder>css</folder>
 		<folder>js</folder>
 	</media>
