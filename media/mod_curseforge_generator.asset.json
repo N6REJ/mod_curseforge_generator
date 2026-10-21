@@ -12,7 +12,7 @@
             "description": "CurseForge Generator module CSS styles",
             "uri": "mod_curseforge_generator/css/style.css",
             "dependencies": [
-                "bootstrap"
+                "bootstrap.css"
             ]
         },
         {
@@ -23,7 +23,7 @@
             "uri": "mod_curseforge_generator/js/curseforge-generator.js",
             "dependencies": [
                 "core",
-                "bootstrap"
+                "bootstrap.dropdown"
             ],
             "attributes": {
                 "defer": true
