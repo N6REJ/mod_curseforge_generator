@@ -15,8 +15,17 @@ use Joomla\CMS\Router\Route;
 
 // Load Web Assets using the module's Web Asset library
 $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-$wa->getRegistry()->addExtensionRegistryFile('mod_curseforge_generator');
-$wa->use('mod_curseforge_generator');
+try
+{
+	$wa->getRegistry()->addExtensionRegistryFile('mod_curseforge_generator');
+	$wa->use('mod_curseforge_generator');
+}
+catch (\Exception $e)
+{
+	// Fallback: register assets manually if the registry file is not found
+	$wa->registerAndUseStyle('mod_curseforge_generator.style', 'mod_curseforge_generator/css/style.css', [], [], ['bootstrap']);
+	$wa->registerAndUseScript('mod_curseforge_generator.script', 'mod_curseforge_generator/js/curseforge-generator.js', [], ['defer' => true], ['bootstrap.dropdown#script', 'mod_curseforge_generator.style']);
+}
 
 // AJAX endpoint URL
 $ajaxUrl = Route::_('index.php?format=json&xajax=1', false);

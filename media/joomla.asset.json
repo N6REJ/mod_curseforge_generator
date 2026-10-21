@@ -1,14 +1,15 @@
 {
     "$schema": "https://raw.githubusercontent.com/joomla/joomla-cms/5.0/build/media/cdn/joomla.asset.json",
     "name": "mod_curseforge_generator",
-    "version": "2026.10.24",
+    "type": "module",
+    "version": "2026.10.25",
     "description": "CurseForge Downloads Badge Generator Module Web Assets",
     "license": "MIT",
     "assets": [
         {
             "name": "mod_curseforge_generator.style",
             "type": "style",
-            "version": "2026.10.24",
+            "version": "2026.10.25",
             "description": "CurseForge Generator module CSS styles",
             "uri": "css/style.css",
             "dependencies": [
@@ -18,7 +19,7 @@
         {
             "name": "mod_curseforge_generator.script",
             "type": "script",
-            "version": "2026.10.24",
+            "version": "2026.10.25",
             "description": "CurseForge Generator module JavaScript",
             "uri": "js/curseforge-generator.js",
             "dependencies": [
@@ -32,7 +33,7 @@
         {
             "name": "mod_curseforge_generator",
             "type": "preset",
-            "version": "2026.10.24",
+            "version": "2026.10.25",
             "description": "CurseForge Generator module preset - loads all CSS and JS assets",
             "dependencies": [
                 "mod_curseforge_generator.style",

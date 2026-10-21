@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2026.10.25] - 2026-10-21
+
+### Fixed
+
+* Fixed 500 error "There is no mod_curseforge_generator asset in the registry" caused by Web Asset registry file not being found on the live site
+* Added try-catch fallback in template to register assets manually when registry file is unavailable
+* Added `"type": "module"` to joomla.asset.json top-level metadata
+
 ## [2026.10.23] - 2026-10-21
 
 ### Changed
