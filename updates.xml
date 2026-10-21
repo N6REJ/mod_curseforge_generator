@@ -6,10 +6,10 @@
     <element>mod_curseforge_generator</element>
     <type>module</type>
     <client>site</client>
-    <version>2026.10.21.7</version>
+    <version>2026.10.21</version>
     <infourl title="CurseForge Badge &amp; Chart Generator">https://github.com/N6REJ/mod_curseforge_generator</infourl>
     <downloads>
-      <downloadurl type="full" format="zip">https://github.com/N6REJ/mod_curseforge_generator/releases/download/2026.10.21.7/mod_curseforge_generator_2026.10.21.7.zip</downloadurl>
+      <downloadurl type="full" format="zip">https://github.com/N6REJ/mod_curseforge_generator/releases/download/2026.10.21/mod_curseforge_generator_2026.10.21.zip</downloadurl>
     </downloads>
     <tags>
       <tag>curseforge</tag>
