@@ -12,30 +12,19 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\URI\URI;
 
-// Load all assets via Web Asset Manager
+// Load Bootstrap 5 via Web Asset Manager (built-in preset)
 $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-
-// Load Bootstrap 5 preset (CSS + JS framework)
 $wa->usePreset('bootstrap');
 
-// Register and use module-specific CSS with Bootstrap dependency
-$wa->registerAndUseStyle(
-    'mod_curseforge_generator.style',
-    'mod_curseforge_generator/css/style.css',
-    [],
-    [],
-    ['bootstrap']
-);
+// Load module-specific assets directly from the media folder
+$doc = Factory::getDocument();
+$mediaPath = 'media/mod_curseforge_generator/';
+$mediaUrl = URI::root() . $mediaPath;
 
-// Register and use module-specific JS with Bootstrap JS dependency
-$wa->registerAndUseScript(
-    'mod_curseforge_generator.script',
-    'mod_curseforge_generator/js/curseforge-generator.js',
-    [],
-    ['defer' => true],
-    ['bootstrap.dropdown#script', 'mod_curseforge_generator.style']
-);
+$doc->addStyleSheet($mediaUrl . 'css/style.css');
+$doc->addScript($mediaUrl . 'js/curseforge-generator.js', [], ['defer' => true]);
 
 // AJAX endpoint URL
 $ajaxUrl = Route::_('index.php?format=json&xajax=1', false);
