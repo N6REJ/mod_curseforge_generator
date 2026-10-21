@@ -2,7 +2,7 @@
     "$schema": "https://raw.githubusercontent.com/joomla/joomla-cms/5.0/build/media/cdn/joomla.asset.json",
     "name": "mod_curseforge_generator",
     "type": "module",
-    "version": "2026.10.21.5",
+    "version": "2026.10.21.6",
     "description": "CurseForge Downloads Badge Generator Module Web Assets",
     "license": "MIT",
     "assets": [
