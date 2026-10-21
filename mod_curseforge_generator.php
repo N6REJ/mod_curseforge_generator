@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @package     N6REJ.Module.curseforgeGenerator
+ * @package     mod_curseforge_generator
  * @subpackage  mod_curseforge_generator
  * @license     MIT License
  * @link        https://github.com/N6REJ/curseforge-downloads-action

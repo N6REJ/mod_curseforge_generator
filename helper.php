@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package     Bearsampp.Module.curseforgeGenerator
+ * @package     mod_curseforge_generator
  * @subpackage  mod_curseforge_generator
  * @license     MIT License
- * @link        https://github.com/Bearsampp/mod_curseforge_generator
+ * @link        https://github.com/N6REJ/curseforge-downloads-action
  */
 
 defined('_JEXEC') or die;
@@ -19,8 +19,8 @@ class ModcurseforgeGeneratorHelper
 
     /**
      * Resolve the GitHub organisation/user that owns the repositories.
-     * Accepts "https://github.com/Bearsampp", "github.com/Bearsampp", "Bearsampp" or
-     * "Bearsampp/mod_curseforge_generator" (only the first path segment is used).
+     * Accepts "https://github.com/N6REJ", "github.com/N6REJ", "N6REJ" or
+     * "N6REJ/mod_curseforge_generator" (only the first path segment is used).
      *
      * @param   \Joomla\Registry\Registry  $params
      *
@@ -112,19 +112,26 @@ class ModcurseforgeGeneratorHelper
      * @param   string  $query    JSONPath query
      * @param   string  $label    Badge label text
      * @param   string  $color    Hex color (no #)
+     * @param   string  $style    Badge style (flat, flat-square, plastic, for-the-badge, social)
      *
      * @return  string
      */
-    public static function buildBadgeUrl($owner, $repo, $branch, $jsonPath, $query, $label, $color)
+    public static function buildBadgeUrl($owner, $repo, $branch, $jsonPath, $query, $label, $color, $style = 'flat-square')
     {
         $source = self::getRawUrl($owner, $repo, $branch, $jsonPath);
+
+        // Validate style against allowed values
+        $allowedStyles = ['flat', 'flat-square', 'plastic', 'for-the-badge', 'social'];
+        if (!in_array($style, $allowedStyles, true)) {
+            $style = 'flat-square';
+        }
 
         return 'https://img.shields.io/badge/dynamic/json'
             . '?url=' . urlencode($source)
             . '&query=' . urlencode($query)
             . '&label=' . urlencode($label)
             . '&color=' . $color
-            . '&style=flat-square'
+            . '&style=' . $style
             . '&logo=curseforge'
             . '&cacheSeconds=900';
     }
@@ -151,9 +158,10 @@ class ModcurseforgeGeneratorHelper
      */
     public static function ajaxGenerate()
     {
-        $app = Factory::getApplication();
+        $app   = Factory::getApplication();
+        $input = $app->input;
 
-        $post     = $app->input->post;
+        $post     = $input->post;
         $owner    = $post->get('owner', '', 'STRING');
         $repo     = $post->get('repo', '', 'STRING');
         $branch   = $post->get('branch', '', 'STRING');
@@ -165,6 +173,7 @@ class ModcurseforgeGeneratorHelper
         $metric = $post->get('metric', 'total|$.stats.total|0A7EA4', 'STRING');
         $label  = $post->get('label', 'downloads/total', 'STRING');
         $color  = $post->get('color', '0A7EA4', 'STRING');
+        $style  = $post->get('style', 'flat-square', 'STRING');
 
         // Chart fields
         $chartType  = $post->get('charttype', 'total-trend', 'STRING');
@@ -188,7 +197,7 @@ class ModcurseforgeGeneratorHelper
         $label        = $label ?: ('downloads/' . ($metricParts[0] ?? 'total'));
 
         // Build badge
-        $badgeUrl = self::buildBadgeUrl($owner, $repo, $branch, $jsonPath, $query, $label, $color);
+        $badgeUrl = self::buildBadgeUrl($owner, $repo, $branch, $jsonPath, $query, $label, $color, $style);
         $badgeMd  = '!' . $label . '(' . $badgeUrl . ')';
 
         // Build chart

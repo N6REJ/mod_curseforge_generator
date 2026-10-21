@@ -7,9 +7,8 @@
 	<license>MIT License</license>
 	<authorEmail>n6rej@protonmail.com</authorEmail>
 	<authorUrl>https://github.com/N6REJ</authorUrl>
-	<version>2026.10.21</version>
+ <version>2026.10.23</version>
 	<description>MOD_curseforge_GENERATOR_DESC</description>
-	<namespace>Bearsampp\Module\curseforgeGenerator</namespace>
 	<dependencies>
 		<php version="8.1" />
 		<joomla version="5.0" />
@@ -17,7 +16,6 @@
 
 	<files>
 		<filename module="mod_curseforge_generator">mod_curseforge_generator.php</filename>
-		<filename>mod_curseforge_generator.xml</filename>
 		<filename>helper.php</filename>
 		<folder>tmpl</folder>
 		<folder>media</folder>
@@ -64,6 +62,19 @@
 					default="stats-data"
 					size="15"
 				/>
+				<field
+					name="default_style"
+					type="list"
+					label="MOD_curseforge_GENERATOR_STYLE_LABEL"
+					description="MOD_curseforge_GENERATOR_STYLE_DESC"
+					default="flat-square"
+				>
+					<option value="flat">MOD_curseforge_GENERATOR_STYLE_FLAT</option>
+					<option value="flat-square">MOD_curseforge_GENERATOR_STYLE_FLAT_SQUARE</option>
+					<option value="plastic">MOD_curseforge_GENERATOR_STYLE_PLASTIC</option>
+					<option value="for-the-badge">MOD_curseforge_GENERATOR_STYLE_FOR_THE_BADGE</option>
+					<option value="social">MOD_curseforge_GENERATOR_STYLE_SOCIAL</option>
+				</field>
 			</fieldset>
 			<fieldset name="advanced">
 				<field

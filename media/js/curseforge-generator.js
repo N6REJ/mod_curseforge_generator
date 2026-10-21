@@ -22,7 +22,7 @@
   }
 
   // ---- Tab switching ----
-  var tabs = curseforge.querySelectorAll(".curseforge-tab");
+  var tabs = curseforge.querySelectorAll(".nav-tab-btn");
   var panels = {
     basic: el("curseforge-panel-basic"),
     advanced: el("curseforge-panel-advanced")
@@ -32,21 +32,23 @@
     tabs[t].addEventListener("click", (function (tab) {
       return function () {
         var target = tab.getAttribute("data-tab");
-        // Update tab buttons
+        // Update tab buttons - Bootstrap 5 nav-link active state
         for (var i = 0; i < tabs.length; i++) {
-          tabs[i].classList.remove("curseforge-tab-active");
+          tabs[i].classList.remove("active");
           tabs[i].setAttribute("aria-selected", "false");
         }
-        tab.classList.add("curseforge-tab-active");
+        tab.classList.add("active");
         tab.setAttribute("aria-selected", "true");
-        // Update panels
+        // Update panels - Bootstrap 5 show/d-none
         for (var key in panels) {
           if (panels.hasOwnProperty(key)) {
-            panels[key].classList.remove("curseforge-panel-active");
+            panels[key].classList.remove("show");
+            panels[key].classList.add("d-none");
           }
         }
         if (panels[target]) {
-          panels[target].classList.add("curseforge-panel-active");
+          panels[target].classList.add("show");
+          panels[target].classList.remove("d-none");
         }
         // Re-trigger generation in case advanced fields changed
         scheduleGenerate();
@@ -89,7 +91,7 @@
 
   function doGenerate() {
     if (!ajaxUrl) {
-      setStatus(Joomla.JText._("MOD_curseforge_GENERATOR_AJAX_ERROR") || "AJAX endpoint not configured.", true);
+      setStatus(Joomla.Text._("MOD_curseforge_GENERATOR_AJAX_ERROR") || "AJAX endpoint not configured.", true);
       return;
     }
 
@@ -103,14 +105,15 @@
     formData.append("metric", value("curseforge-metric", "total|$.stats.total|0A7EA4"));
     formData.append("label", value("curseforge-label", "downloads/total"));
     formData.append("color", value("curseforge-color", "0A7EA4"));
+    formData.append("style", value("curseforge-style", "flat-square"));
     formData.append("charttype", value("curseforge-charttype", "total-trend"));
     formData.append("theme", value("curseforge-theme", "slate"));
     formData.append("primary", el("curseforge-primary") && el("curseforge-primary").checked ? "1" : "0");
     formData.append("chart-color", value("curseforge-chart-color", "0A7EA4"));
     // CSRF token
-    var csrfToken = Joomla.getOptions("csrf.token");
+    var csrfToken = Joomla.getOptions("system.csrf.token") || Joomla.getOptions("csrf.token");
     if (csrfToken) {
-      formData.append(csrfToken, "1");
+      formData.append(csrfToken.name, csrfToken.value);
     }
 
     // Show loading state
@@ -187,18 +190,33 @@
   }
 
   function setStatus(message, isError) {
-    var node = el("curseforge-status");
-    if (!node) return;
-    node.textContent = message;
-    node.className = "curseforge-status" + (isError ? " curseforge-error" : "");
-    if (message) {
-      window.setTimeout(function () {
-        if (node.textContent === message) {
-          node.textContent = "";
-          node.className = "curseforge-status";
-        }
-      }, 2500);
+    var successNode = el("curseforge-status-success");
+    var errorNode = el("curseforge-status-error");
+
+    // Clear both alerts
+    if (successNode) {
+      successNode.textContent = "";
+      successNode.classList.add("d-none");
     }
+    if (errorNode) {
+      errorNode.textContent = "";
+      errorNode.classList.add("d-none");
+    }
+
+    if (!message) return;
+
+    var node = isError ? errorNode : successNode;
+    if (!node) return;
+
+    node.textContent = message;
+    node.classList.remove("d-none");
+
+    window.setTimeout(function () {
+      if (node.textContent === message) {
+        node.textContent = "";
+        node.classList.add("d-none");
+      }
+    }, 2500);
   }
 
   // ---- Copy buttons ----
