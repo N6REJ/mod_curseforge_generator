@@ -1,40 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <extension type="module" client="site" method="upgrade">
-	<name>MOD_CFDG_GENERATOR</name>
+	<name>MOD_curseforge_GENERATOR</name>
 	<author>N6REJ</author>
-	<creationDate>2026 October 20</creationDate>
+	<creationDate>2026 October 21</creationDate>
 	<copyright>Copyright (C) 2026 N6REJ</copyright>
 	<license>MIT License</license>
 	<authorEmail>n6rej@protonmail.com</authorEmail>
 	<authorUrl>https://github.com/N6REJ</authorUrl>
-	<version>2026.10.20</version>
-	<description>MOD_CFDG_GENERATOR_DESC</description>
-	<namespace path="src">Bearsampp\Module\CfdgGenerator</namespace>
+	<version>2026.10.21</version>
+	<description>MOD_curseforge_GENERATOR_DESC</description>
+	<namespace>Bearsampp\Module\curseforgeGenerator</namespace>
 	<dependencies>
 		<php version="8.1" />
 		<joomla version="5.0" />
 	</dependencies>
 
 	<files>
-		<filename module="mod_cfdg_generator">mod_cfdg_generator.php</filename>
-		<filename>mod_cfdg_generator.xml</filename>
+		<filename module="mod_curseforge_generator">mod_curseforge_generator.php</filename>
+		<filename>mod_curseforge_generator.xml</filename>
 		<filename>helper.php</filename>
 		<folder>tmpl</folder>
 		<folder>media</folder>
 		<folder>language</folder>
 	</files>
 
-	<media destination="mod_cfdg_generator" folder="media">
+	<media destination="mod_curseforge_generator" folder="media">
 		<folder>css</folder>
 		<folder>js</folder>
 	</media>
 
 	<languages>
-		<language tag="en-GB">language/en-GB/mod_cfdg_generator.ini</language>
-		<language tag="en-GB">language/en-GB/mod_cfdg_generator.sys.ini</language>
+		<language tag="en-GB">language/en-GB/mod_curseforge_generator.ini</language>
+		<language tag="en-GB">language/en-GB/mod_curseforge_generator.sys.ini</language>
 	</languages>
 	<updateservers>
-		<server type="extension" priority="1" name="CFDG Generator Updates">https://raw.githubusercontent.com/Bearsampp/mod_cfdg_generator/main/updates.xml</server>
+		<server type="extension" priority="1" name="curseforge Generator Updates">https://raw.githubusercontent.com/Bearsampp/mod_curseforge_generator/main/updates.xml</server>
 	</updateservers>
 
 	<config>
@@ -43,24 +43,24 @@
 				<field
 					name="default_owner"
 					type="text"
-					label="MOD_CFDG_GENERATOR_OWNER_LABEL"
-					description="MOD_CFDG_GENERATOR_OWNER_DESC"
+					label="MOD_curseforge_GENERATOR_OWNER_LABEL"
+					description="MOD_curseforge_GENERATOR_OWNER_DESC"
 					default="N6REJ"
 					size="30"
 				/>
 				<field
 					name="default_repo"
 					type="text"
-					label="MOD_CFDG_GENERATOR_REPO_LABEL"
-					description="MOD_CFDG_GENERATOR_REPO_DESC"
+					label="MOD_curseforge_GENERATOR_REPO_LABEL"
+					description="MOD_curseforge_GENERATOR_REPO_DESC"
 					default="curseforge-downloads-action"
 					size="30"
 				/>
 				<field
 					name="default_branch"
 					type="text"
-					label="MOD_CFDG_GENERATOR_BRANCH_LABEL"
-					description="MOD_CFDG_GENERATOR_BRANCH_DESC"
+					label="MOD_curseforge_GENERATOR_BRANCH_LABEL"
+					description="MOD_curseforge_GENERATOR_BRANCH_DESC"
 					default="stats-data"
 					size="15"
 				/>

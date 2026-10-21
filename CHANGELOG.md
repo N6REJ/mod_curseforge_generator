@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Initial release of mod_cfdg_generator - CurseForge Badge & Chart Generator module for Joomla 5/6
+- Initial release of mod_curseforge_generator - CurseForge Badge & Chart Generator module for Joomla 5/6
 - Interactive form to generate CurseForge Downloads Action badge and chart URLs
 - Badge preview with Shields.io-style SVG badges
 - Chart preview with configurable time ranges (daily, weekly, monthly, total)

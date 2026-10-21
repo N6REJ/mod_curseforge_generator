@@ -1,42 +1,111 @@
 /*
   CurseForge Downloads Action - Badge & Chart Generator Styles
   ------------------------------------------------------------------
-  Load this file in a Joomla Custom HTML module or template:
-    <link rel="stylesheet" href="/path/to/cfdg-styles.css" />
+  GDA Generator Lab-inspired layout.
 */
-.cfdg {
+.curseforge {
   max-width: 900px;
   margin: 0 auto;
   font: 15px/1.5 system-ui, Segoe UI, Arial, sans-serif;
   color: #1f2933;
 }
-.cfdg a { color: #0a7ea4; }
-.cfdg .cfdg-intro { margin: 0 0 1rem; }
-.cfdg .cfdg-form { display: block; }
-.cfdg fieldset.card {
-  border: 1px solid #d9e2ec;
-  border-radius: 10px;
-  padding: 0.75rem 1rem 1rem;
+.curseforge a { color: #0a7ea4; }
+
+/* Intro */
+.curseforge .curseforge-intro {
   margin: 0 0 1rem;
-  background: #fff;
-  box-shadow: none;
+  color: #52606d;
+  font-size: 0.9rem;
 }
-.cfdg fieldset.card legend {
-  font-size: inherit;
-  float: none;
-  width: auto;
-  padding: 0;
-  margin-bottom: 0.5rem;
+
+/* Lab Header */
+.curseforge .curseforge-lab-header {
+  margin-bottom: 1rem;
+}
+.curseforge .curseforge-lab-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #243b53;
+  margin: 0 0 0.4rem;
+}
+.curseforge .curseforge-lab-desc {
+  font-size: 0.95rem;
+  color: #486581;
+  margin: 0 0 0.3rem;
+}
+.curseforge .curseforge-lab-tabs-hint {
+  font-size: 0.85rem;
+  color: #8495a7;
+  margin: 0;
+}
+
+/* Tabs */
+.curseforge .curseforge-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid #d9e2ec;
+  margin-bottom: 1rem;
+}
+.curseforge .curseforge-tab {
+  background: none;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #52606d;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: color 0.2s, border-color 0.2s;
+}
+.curseforge .curseforge-tab:hover {
+  color: #0a7ea4;
+}
+.curseforge .curseforge-tab-active {
+  color: #0a7ea4;
+  border-bottom-color: #0a7ea4;
   font-weight: 600;
 }
-.cfdg fieldset.card .fw-semibold { color: #486581; }
-.cfdg .form-label {
+
+/* Panels */
+.curseforge .curseforge-panel {
+  display: none;
+}
+.curseforge .curseforge-panel-active {
+  display: block;
+}
+
+/* Form */
+.curseforge .curseforge-form {
+  margin-bottom: 1.5rem;
+}
+
+/* Field rows */
+.curseforge .curseforge-field-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.curseforge .curseforge-field {
+  flex: 1 1 200px;
+  min-width: 180px;
+}
+
+/* Labels */
+.curseforge .curseforge-label {
+  display: block;
   font-size: 0.8rem;
   color: #52606d;
   margin-bottom: 0.25rem;
   font-weight: 400;
 }
-.cfdg .form-control, .cfdg .form-select {
+
+/* Inputs */
+.curseforge .curseforge-input,
+.curseforge .curseforge-select {
+  width: 100%;
   padding: 0.5rem 0.6rem;
   border: 1px solid #bcccdc;
   border-radius: 8px;
@@ -46,113 +115,145 @@
   color: inherit;
   line-height: 1.5;
   box-shadow: none;
+  box-sizing: border-box;
 }
-.cfdg .form-select {
+.curseforge .curseforge-select {
   padding-right: 2rem;
 }
-.cfdg .form-control:focus, .cfdg .form-select:focus {
+.curseforge .curseforge-input:focus,
+.curseforge .curseforge-select:focus {
   border-color: #0a7ea4;
   box-shadow: 0 0 0 0.2rem rgba(10, 126, 164, 0.15);
+  outline: none;
 }
-.cfdg .form-check {
-  margin-bottom: 0;
+
+/* Color picker */
+.curseforge .curseforge-color-wrapper {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
-.cfdg .form-check-input {
-  margin: 0;
+.curseforge .curseforge-color-picker {
+  width: 40px;
+  height: 36px;
+  padding: 2px;
+  border: 1px solid #bcccdc;
+  border-radius: 8px;
+  cursor: pointer;
+  background: #fff;
   flex-shrink: 0;
 }
-.cfdg .form-check-label {
+.curseforge .curseforge-color-picker::-webkit-color-swatch-wrapper {
+  padding: 2px;
+}
+.curseforge .curseforge-color-picker::-webkit-color-swatch {
+  border: 1px solid #bcccdc;
+  border-radius: 4px;
+}
+.curseforge .curseforge-color-picker::-moz-color-swatch {
+  border: 1px solid #bcccdc;
+  border-radius: 4px;
+}
+.curseforge .curseforge-color-text {
+  flex: 1;
+}
+
+/* Sections */
+.curseforge .curseforge-section {
+  margin-bottom: 1.5rem;
+}
+.curseforge .curseforge-section-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #243b53;
+  margin: 0 0 0.3rem;
+}
+.curseforge .curseforge-section-desc {
   font-size: 0.85rem;
   color: #52606d;
-  margin-bottom: 0;
+  margin: 0 0 1rem;
 }
-.cfdg .cfdg-output h3 {
-  margin: 1.2rem 0 0.4rem;
-  font-size: 1rem;
-  color: #243b53;
-  font-weight: 600;
-}
-.cfdg .cfdg-divider {
+
+/* Divider */
+.curseforge .curseforge-divider {
   border: none;
   border-top: 2px solid #d9e2ec;
-  margin: 1.5rem 0 1.2rem;
+  margin: 1.5rem 0;
 }
-.cfdg .cfdg-code {
-  background: #f0f4f8;
-  border: 1px solid #d9e2ec;
-  border-radius: 8px;
-  padding: 0.75rem 1rem;
-  overflow-x: auto;
-  white-space: pre-wrap;
-  word-break: break-all;
-  margin: 0 0 0.5rem;
-  font-size: 0.85rem;
-  line-height: 1.6;
+
+/* Toggle switch */
+.curseforge .curseforge-toggle-group {
+  margin-bottom: 1rem;
 }
-.cfdg .cfdg-code code {
-  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
-  font-size: 0.85rem;
-  color: #102a43;
-}
-.cfdg .cfdg-url {
-  opacity: 0.85;
-  font-size: 0.8rem;
-}
-.cfdg .cfdg-url code {
-  font-size: 0.8rem;
-}
-.cfdg .btn-primary {
-  border-color: #0a7ea4;
-  background-color: #0a7ea4;
-  border-radius: 8px;
-  padding: 0.45rem 0.8rem;
-  font: inherit;
-  color: #fff;
-  box-shadow: none;
-}
-.cfdg .btn-primary:hover {
-  background-color: #086587;
-  border-color: #086587;
-  color: #fff;
-}
-.cfdg .btn-outline-primary {
-  color: #0a7ea4;
-  border-color: #0a7ea4;
-  border-radius: 8px;
-  padding: 0.45rem 0.8rem;
-  font: inherit;
-  background-color: transparent;
-  box-shadow: none;
-}
-.cfdg .btn-outline-primary:hover {
-  background-color: #0a7ea4;
-  color: #fff;
-  border-color: #0a7ea4;
-}
-.cfdg .btn-sm {
-  font-size: 0.85rem;
-}
-.cfdg .cfdg-preview {
-  margin: 0 0 0.5rem;
-  min-height: 60px;
-  border: 2px dashed #bcccdc;
-  border-radius: 10px;
-  background: #f8fafc;
+.curseforge .curseforge-toggle {
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 1rem;
+  gap: 0.5rem;
+}
+.curseforge .curseforge-toggle-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.curseforge .curseforge-toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  user-select: none;
+}
+.curseforge .curseforge-toggle-slider {
   position: relative;
+  width: 40px;
+  height: 22px;
+  background: #bcccdc;
+  border-radius: 11px;
+  transition: background 0.2s;
+  flex-shrink: 0;
 }
-.cfdg .cfdg-preview img {
-  max-width: 100%;
-  height: auto;
-  display: block;
+.curseforge .curseforge-toggle-slider::before {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.2s;
 }
-.cfdg .cfdg-preview-placeholder {
+.curseforge .curseforge-toggle-input:checked + .curseforge-toggle-label .curseforge-toggle-slider {
+  background: #0a7ea4;
+}
+.curseforge .curseforge-toggle-input:checked + .curseforge-toggle-label .curseforge-toggle-slider::before {
+  transform: translateX(18px);
+}
+.curseforge .curseforge-toggle-text {
+  font-size: 0.85rem;
+  color: #486581;
+}
+.curseforge .curseforge-toggle-hint {
+  font-size: 0.8rem;
+  color: #8495a7;
+  margin: 0.25rem 0 0;
+}
+
+/* Preview area */
+.curseforge .curseforge-preview-area {
+  margin-bottom: 1rem;
+  border: 1px solid #d9e2ec;
+  border-radius: 10px;
+  background: #f8fafc;
+  overflow: hidden;
+}
+.curseforge .curseforge-preview-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #486581;
+  padding: 0.5rem 1rem 0;
+}
+.curseforge .curseforge-preview-placeholder {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -160,23 +261,93 @@
   gap: 0.5rem;
   color: #8495a7;
   font-size: 0.9rem;
-  width: 100%;
-  min-height: 50px;
+  padding: 2rem 1rem;
+  min-height: 80px;
 }
-.cfdg .cfdg-placeholder-icon {
+.curseforge .curseforge-placeholder-icon {
   width: 48px;
   height: 48px;
   opacity: 0.5;
 }
-.cfdg .cfdg-badge-placeholder span {
-  font-size: 0.85rem;
+.curseforge .curseforge-preview-content {
+  padding: 1rem;
+  text-align: center;
 }
-.cfdg .cfdg-chart-placeholder span {
-  font-size: 0.85rem;
+.curseforge .curseforge-preview-img {
+  max-width: 100%;
+  height: auto;
+  display: inline-block;
 }
-.cfdg .cfdg-status {
+
+/* Output group */
+.curseforge .curseforge-output-group {
+  margin-bottom: 1rem;
+}
+.curseforge .curseforge-output-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #486581;
+  margin-bottom: 0.25rem;
+}
+.curseforge .curseforge-code-block {
+  background: #f0f4f8;
+  border: 1px solid #d9e2ec;
+  border-radius: 8px;
+  padding: 0.6rem 0.8rem;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+  margin-bottom: 0.75rem;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+.curseforge .curseforge-code-block code {
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 0.85rem;
+  color: #102a43;
+}
+
+/* Buttons */
+.curseforge .curseforge-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.curseforge .curseforge-btn {
+  border: 1px solid #0a7ea4;
+  border-radius: 8px;
+  padding: 0.45rem 0.8rem;
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.curseforge .curseforge-btn-primary {
+  background-color: #0a7ea4;
+  color: #fff;
+}
+.curseforge .curseforge-btn-primary:hover {
+  background-color: #086587;
+  border-color: #086587;
+  color: #fff;
+}
+.curseforge .curseforge-btn-outline {
+  background-color: transparent;
+  color: #0a7ea4;
+}
+.curseforge .curseforge-btn-outline:hover {
+  background-color: #0a7ea4;
+  color: #fff;
+}
+
+/* Status */
+.curseforge .curseforge-status {
   min-height: 1.2rem;
   font-size: 0.85rem;
   color: #1e8e3e;
+  margin-top: 0.5rem;
 }
-.cfdg .cfdg-status.cfdg-error { color: #b3261e; }
+.curseforge .curseforge-status.curseforge-error {
+  color: #b3261e;
+}
