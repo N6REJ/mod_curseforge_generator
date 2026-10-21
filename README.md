@@ -83,7 +83,7 @@ mod_curseforge_generator/
 │   └── default.php           # GDA-style Generator Lab template
 ├── media/
 │   ├── css/
-│   │   └── style.css         # GDA-inspired styles (tabs, pickers, toggles)
+│   │   └── curseforge-generate.css         # GDA-inspired styles (tabs, pickers, toggles)
 │   └── js/
 │       └── curseforge-generator.js # AJAX-based generator script
 ├── language/

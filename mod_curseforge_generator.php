@@ -20,20 +20,13 @@ $defaultRepo   = $params->get('default_repo', 'curseforge-downloads-action');
 $defaultBranch = $params->get('default_branch', 'stats-data');
 $defaultStyle  = $params->get('default_style', 'flat-square');
 
-// 3. Register assets directly in PHP (Bypasses JSON registry crashes)
-$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+// 3. Directly load files (Bypasses all JSON asset files and registry lookups completely)
+$doc = Factory::getApplication()->getDocument();
+$mediaUrl = Joomla\CMS\URI\URI::root() . 'media/mod_curseforge_generator/';
 
-// Load core Bootstrap styles and interactive scripts
-$wa->useAsset('style', 'bootstrap.css');
-$wa->useAsset('script', 'bootstrap.dropdown');
-
-// Register and load your module's custom CSS style sheet
-$wa->registerStyle('mod_curseforge_generator.style', 'mod_curseforge_generator/css/style.css');
-$wa->useAsset('style', 'mod_curseforge_generator.style');
-
-// Register and load your module's custom JS script file (depends on core)
-$wa->registerScript('mod_curseforge_generator.script', 'mod_curseforge_generator/js/curseforge-generator.js', ['defer' => true], [], ['core']);
-$wa->useAsset('script', 'mod_curseforge_generator.script');
+// Inject asset files directly into the template document header structure
+$doc->addStyleSheet($mediaUrl . 'css/curseforge-generate.css');
+$doc->addScript($mediaUrl . 'js/curseforge-generator.js', [], ['defer' => true]);
 
 // 4. Generate URL endpoints and capture URL state params
 $ajaxUrl   = Route::_('index.php?format=json&xajax=1', false);
@@ -42,8 +35,8 @@ $urlColor  = $input->get('badge-color', '', 'STRING');
 $urlLabel  = $input->get('badge-label', '', 'STRING');
 $urlTab    = $input->get('tab', 'badge', 'STRING');
 
-// 5. Secure pass parameters to JavaScript state container
-Factory::getApplication()->getDocument()->addScriptOptions('mod_curseforge_generator', [
+// 5. Pass parameters to JavaScript container safely
+$doc->addScriptOptions('mod_curseforge_generator', [
     'defaultOwner'  => $defaultOwner,
     'defaultRepo'   => $defaultRepo,
     'defaultBranch' => $defaultBranch,
@@ -55,5 +48,5 @@ Factory::getApplication()->getDocument()->addScriptOptions('mod_curseforge_gener
     'urlTab'        => $urlTab,
 ]);
 
-// 6. Load layout file (renders the HTML)
+// 6. Load layout file
 require ModuleHelper::getLayoutPath('mod_curseforge_generator', $params->get('layout', 'default'));
