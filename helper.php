@@ -11,7 +11,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 
-class ModCurseforge_generatorHelper
+class ModCurseforgeGeneratorHelper
 {
     private const SAFE_SLUG  = '/^[A-Za-z0-9_.-]+$/';
     private const SAFE_PATH  = '/^[A-Za-z0-9_.\-\/]+$/';
