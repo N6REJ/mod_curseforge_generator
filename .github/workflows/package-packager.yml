@@ -33,7 +33,7 @@ jobs:
           targetplatform-version: '(5|6).*'
           author: 'N6REJ'
           copyright-holder: 'N6REJ'
-          copyright-start-year: '2025'
+          copyright-start-year: '2026'
           license-file: 'LICENSE'
           update-joomla-server: 'true'
           commit-changes: 'true'
@@ -48,5 +48,5 @@ jobs:
         with:
           name: mod_curseforge_generator_${{ steps.package.outputs.version }}
           path: ${{ steps.package.outputs.package-path }}
-          retention-days: 180
+          retention-days: 90
           if-no-files-found: warn
