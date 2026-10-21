@@ -7,11 +7,13 @@
  * @link        https://github.com/N6REJ/curseforge-downloads-action
  */
 
+namespace Joomla\Module\CurseforgeGenerator\Site\Helper;
+
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 
-class ModCurseforge_generatorHelper
+class CurseforgeGeneratorHelper
 {
     private const SAFE_SLUG  = '/^[A-Za-z0-9_.-]+$/';
     private const SAFE_PATH  = '/^[A-Za-z0-9_.\-\/]+$/';
@@ -134,11 +136,11 @@ class ModCurseforge_generatorHelper
     }
 
     /**
-     * Handle the AJAX request and return a JSON response with generated badge/chart data.
+     * Handle the com_ajax request and return a JSON string with generated badge/chart data.
      *
-     * @return  void
+     * @return  string
      */
-    public static function getAjax()
+    public function getAjax()
     {
         $app   = Factory::getApplication();
         $input = $app->input;
@@ -192,7 +194,6 @@ class ModCurseforge_generatorHelper
         $chartUrl = self::buildChartUrl($owner, $repo, $branch, $chartTarget);
         $chartMd  = '![Downloads ' . $chartType . ' ' . $theme . '](' . $chartUrl . ')';
 
-        // Return JSON response
         $response = [
             'success' => true,
             'badge'   => [

@@ -13,8 +13,6 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 
-// AJAX endpoint URL
-$ajaxUrl = Route::_('index.php?format=json&xajax=1', false);
 
 ?>
 
