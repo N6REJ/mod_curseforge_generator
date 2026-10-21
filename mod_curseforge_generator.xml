@@ -16,7 +16,6 @@
 
 	<files>
 		<filename module="mod_curseforge_generator">mod_curseforge_generator.php</filename>
-		<filename>provider.php</filename>
 		<filename>helper.php</filename>
 		<folder>tmpl</folder>
 		<folder>media</folder>
