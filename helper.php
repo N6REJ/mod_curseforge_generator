@@ -11,7 +11,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 
-class ModcurseforgeGeneratorHelper
+class ModCurseforge_generatorHelper
 {
     private const SAFE_SLUG  = '/^[A-Za-z0-9_.-]+$/';
     private const SAFE_PATH  = '/^[A-Za-z0-9_.\-\/]+$/';
@@ -138,7 +138,7 @@ class ModcurseforgeGeneratorHelper
      *
      * @return  void
      */
-    public static function ajaxGenerate()
+    public static function getAjax()
     {
         $app   = Factory::getApplication();
         $input = $app->input;
@@ -208,11 +208,6 @@ class ModcurseforgeGeneratorHelper
             ],
         ];
 
-        $app->setHeader('Content-Type', 'application/json')
-            ->setHeader('Cache-Control', 'no-store, no-cache, must-revalidate')
-            ->setHeader('Pragma', 'no-cache');
-
-        echo json_encode($response);
-        $app->close();
+        return json_encode($response);
     }
 }

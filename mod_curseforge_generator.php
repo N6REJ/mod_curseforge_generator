@@ -5,14 +5,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ModuleHelper;
 use Joomla\CMS\Router\Route;
 
-// 1. Handle AJAX requests early
 $input = Factory::getApplication()->input;
-if ($input->get('format') === 'json' && $input->getBool('xajax', false))
-{
-    require_once __DIR__ . '/helper.php';
-    ModcurseforgeGeneratorHelper::ajaxGenerate();
-    return;
-}
 
 // 2. Fetch module configuration fallback variables
 $defaultOwner  = $params->get('default_owner', 'N6REJ');
@@ -36,7 +29,7 @@ $doc->addStyleSheet($mediaUrl . 'css/curseforge-generate.css');
 $doc->addScript($mediaUrl . 'js/curseforge-generator.js', [], ['defer' => true]);
 
 // 4. Generate URL endpoints and capture URL state params
-$ajaxUrl   = Route::_('index.php?format=json&xajax=1', false);
+$ajaxUrl   = Route::_('index.php?option=com_ajax&module=curseforge_generator&format=raw', false);
 $urlMetric = $input->get('badge-metric', '', 'STRING');
 $urlColor  = $input->get('badge-color', '', 'STRING');
 $urlLabel  = $input->get('badge-label', '', 'STRING');
