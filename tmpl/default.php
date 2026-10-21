@@ -12,19 +12,16 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\URI\URI;
 
-// Load Bootstrap 5 via Web Asset Manager (built-in preset)
+// 1. Get the Web Asset Manager instance
 $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-$wa->usePreset('bootstrap');
 
-// Load module-specific assets directly from the media folder
-$doc = Factory::getDocument();
-$mediaPath = 'media/mod_curseforge_generator/';
-$mediaUrl = URI::root() . $mediaPath;
+// 2. Register and enforce your asset dependencies natively
+// (Make sure 'mod_curseforge_generator' is defined in your joomla.asset.json)
+$wa->usePreset('mod_curseforge_generator');
 
-$doc->addStyleSheet($mediaUrl . 'css/style.css');
-$doc->addScript($mediaUrl . 'js/curseforge-generator.js', [], ['defer' => true]);
+// If you need to force Bootstrap scripts to load as well, uncomment the line below:
+// $wa->useAsset('script', 'bootstrap.dropdown');
 
 // AJAX endpoint URL
 $ajaxUrl = Route::_('index.php?format=json&xajax=1', false);
@@ -36,18 +33,19 @@ $urlColor  = $input->get('badge-color', '', 'STRING');
 $urlLabel  = $input->get('badge-label', '', 'STRING');
 $urlTab    = $input->get('tab', 'badge', 'STRING');
 
-// Pass default values to JS
-Factory::getDocument()->addScriptOptions('mod_curseforge_generator', [
-    'defaultOwner'  => $defaultOwner,
-    'defaultRepo'   => $defaultRepo,
-    'defaultBranch' => $defaultBranch,
-    'defaultStyle'  => $defaultStyle,
-    'ajaxUrl'       => $ajaxUrl,
-    'urlMetric'     => $urlMetric,
-    'urlColor'      => $urlColor,
-    'urlLabel'      => $urlLabel,
-    'urlTab'        => $urlTab,
+// 3. Modern data-passing (Safe, CSP-compliant)
+Factory::getApplication()->getDocument()->addScriptOptions('mod_curseforge_generator', [
+	'defaultOwner'  => $defaultOwner ?? '',  // Null coalescing to prevent undefined notices
+	'defaultRepo'   => $defaultRepo ?? '',
+	'defaultBranch' => $defaultBranch ?? '',
+	'defaultStyle'  => $defaultStyle ?? '',
+	'ajaxUrl'       => $ajaxUrl,
+	'urlMetric'     => $urlMetric,
+	'urlColor'      => $urlColor,
+	'urlLabel'      => $urlLabel,
+	'urlTab'        => $urlTab,
 ]);
+
 ?>
 
 <div class="mod-curseforge-generator <?php echo htmlspecialchars($params->get('moduleclass_sfx', '')); ?>">
