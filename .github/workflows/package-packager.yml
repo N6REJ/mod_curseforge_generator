@@ -21,8 +21,8 @@ jobs:
         uses: N6REJ/joomla-packager@2026.10.17.2 # 2026.10.17.2 - fixes inline SHA-256 cleanup to preserve feed XML
         id: package
         with:
-          extension-name: 'mod_cfdg_generator'
-          extension-xml: 'mod_cfdg_generator.xml'
+          extension-name: 'mod_curseforge_generator'
+          extension-xml: 'mod_curseforge_generator.xml'
           extension-type: 'module'
           # Feed matching: Joomla silently ignores entries missing client or
           # targetplatform. Match Joomla 5 and 6 so J5.4 installs are offered
@@ -46,7 +46,7 @@ jobs:
       - name: Upload extension package files
         uses: actions/upload-artifact@v7 # v7.0.1 (Node 24)
         with:
-          name: mod_cfdg_generator_${{ steps.package.outputs.version }}
+          name: mod_curseforge_generator_${{ steps.package.outputs.version }}
           path: ${{ steps.package.outputs.package-path }}
           retention-days: 90
           if-no-files-found: warn
