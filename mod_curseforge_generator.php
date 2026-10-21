@@ -25,5 +25,6 @@ if ($input->get('format') === 'json' && $input->getBool('xajax', false))
 $defaultOwner  = $params->get('default_owner', 'N6REJ');
 $defaultRepo   = $params->get('default_repo', 'curseforge-downloads-action');
 $defaultBranch = $params->get('default_branch', 'stats-data');
+$defaultStyle  = $params->get('default_style', 'flat-square');
 
 require ModuleHelper::getLayoutPath('mod_curseforge_generator', $params->get('layout'));

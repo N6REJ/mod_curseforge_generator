@@ -1,8 +1,8 @@
 /*
-  CurseForge Downloads Action - Badge & Chart Generator Script
+  CurseForge Downloads Action - Badge Generator Script
   ------------------------------------------------------------------
-  AJAX-based generator matching the GDA Generator Lab UI.
-  All badge/chart URL construction is handled server-side.
+  AJAX-based generator for dynamic badge preview and output.
+  Badge URL construction is handled server-side.
 */
 (function () {
   "use strict";
@@ -19,41 +19,6 @@
   function value(id, fallback) {
     var node = el(id);
     return node && typeof node.value === "string" ? node.value.trim() : fallback;
-  }
-
-  // ---- Tab switching ----
-  var tabs = curseforge.querySelectorAll(".nav-tab-btn");
-  var panels = {
-    basic: el("curseforge-panel-basic"),
-    advanced: el("curseforge-panel-advanced")
-  };
-
-  for (var t = 0; t < tabs.length; t++) {
-    tabs[t].addEventListener("click", (function (tab) {
-      return function () {
-        var target = tab.getAttribute("data-tab");
-        // Update tab buttons - Bootstrap 5 nav-link active state
-        for (var i = 0; i < tabs.length; i++) {
-          tabs[i].classList.remove("active");
-          tabs[i].setAttribute("aria-selected", "false");
-        }
-        tab.classList.add("active");
-        tab.setAttribute("aria-selected", "true");
-        // Update panels - Bootstrap 5 show/d-none
-        for (var key in panels) {
-          if (panels.hasOwnProperty(key)) {
-            panels[key].classList.remove("show");
-            panels[key].classList.add("d-none");
-          }
-        }
-        if (panels[target]) {
-          panels[target].classList.add("show");
-          panels[target].classList.remove("d-none");
-        }
-        // Re-trigger generation in case advanced fields changed
-        scheduleGenerate();
-      };
-    })(tabs[t]));
   }
 
   // ---- Color picker sync ----
@@ -77,7 +42,86 @@
   }
 
   syncColorPicker("curseforge-color-picker", "curseforge-color");
-  syncColorPicker("curseforge-chart-color-picker", "curseforge-chart-color");
+
+  // ---- Tab switching ----
+  var tabs = curseforge.querySelectorAll(".nav-tab-btn");
+  var panels = {
+    badge: el("curseforge-panel-badge"),
+    chart: el("curseforge-panel-chart")
+  };
+
+  function switchTab(target) {
+    // Update tab buttons
+    for (var i = 0; i < tabs.length; i++) {
+      tabs[i].classList.remove("active");
+      tabs[i].setAttribute("aria-selected", "false");
+    }
+    // Update panels
+    for (var key in panels) {
+      if (panels.hasOwnProperty(key)) {
+        panels[key].classList.remove("show");
+        panels[key].classList.add("d-none");
+      }
+    }
+    // Activate target
+    for (var j = 0; j < tabs.length; j++) {
+      if (tabs[j].getAttribute("data-tab") === target) {
+        tabs[j].classList.add("active");
+        tabs[j].setAttribute("aria-selected", "true");
+        break;
+      }
+    }
+    if (panels[target]) {
+      panels[target].classList.add("show");
+      panels[target].classList.remove("d-none");
+    }
+    // Re-trigger generation
+    scheduleGenerate();
+  }
+
+  for (var t = 0; t < tabs.length; t++) {
+    tabs[t].addEventListener("click", (function (tab) {
+      return function () {
+        switchTab(tab.getAttribute("data-tab"));
+      };
+    })(tabs[t]));
+  }
+
+  // ---- Apply URL parameters to pre-fill form ----
+  if (config.urlMetric) {
+    var metricSelect = el("curseforge-metric");
+    if (metricSelect) {
+      for (var m = 0; m < metricSelect.options.length; m++) {
+        var parts = metricSelect.options[m].value.split("|");
+        if (parts[0] === config.urlMetric) {
+          metricSelect.selectedIndex = m;
+          break;
+        }
+      }
+    }
+  }
+
+  if (config.urlColor) {
+    var colorText = el("curseforge-color");
+    var colorPicker = el("curseforge-color-picker");
+    var cleanColor = config.urlColor.replace("#", "");
+    if (/^[0-9A-Fa-f]{6}$/.test(cleanColor)) {
+      if (colorText) colorText.value = cleanColor;
+      if (colorPicker) colorPicker.value = "#" + cleanColor;
+    }
+  }
+
+  if (config.urlLabel) {
+    var labelInput = el("curseforge-label");
+    if (labelInput) {
+      labelInput.value = decodeURIComponent(config.urlLabel);
+    }
+  }
+
+  // Switch to URL-specified tab
+  if (config.urlTab && panels[config.urlTab]) {
+    switchTab(config.urlTab);
+  }
 
   // ---- Debounced AJAX generation ----
   var generateTimer = null;
@@ -99,17 +143,16 @@
     formData.append("owner", value("curseforge-owner", ""));
     formData.append("repo", value("curseforge-repo", ""));
     formData.append("branch", value("curseforge-branch", ""));
-    formData.append("jsonpath", value("curseforge-jsonpath", "curseforge/downloads.json"));
-    formData.append("chartpath", value("curseforge-chartpath", "curseforge/downloads-trend.svg"));
-    formData.append("chartdir", value("curseforge-chartdir", "curseforge/charts"));
+    formData.append("jsonpath", "curseforge/downloads.json");
     formData.append("metric", value("curseforge-metric", "total|$.stats.total|0A7EA4"));
     formData.append("label", value("curseforge-label", "downloads/total"));
     formData.append("color", value("curseforge-color", "0A7EA4"));
     formData.append("style", value("curseforge-style", "flat-square"));
+    formData.append("chartpath", "curseforge/downloads-trend.svg");
+    formData.append("chartdir", "curseforge/charts");
     formData.append("charttype", value("curseforge-charttype", "total-trend"));
     formData.append("theme", value("curseforge-theme", "slate"));
     formData.append("primary", el("curseforge-primary") && el("curseforge-primary").checked ? "1" : "0");
-    formData.append("chart-color", value("curseforge-chart-color", "0A7EA4"));
     // CSRF token
     var csrfToken = Joomla.getOptions("system.csrf.token") || Joomla.getOptions("csrf.token");
     if (csrfToken) {

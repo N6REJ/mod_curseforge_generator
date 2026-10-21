@@ -28,7 +28,7 @@ jobs:
           # targetplatform.
           extension-client: 'site'
           targetplatform-name: 'joomla'
-          targetplatform-version: '(6).*'
+          targetplatform-version: '(5|6).*'
 
           author: 'N6REJ'
           copyright-holder: 'N6REJ'

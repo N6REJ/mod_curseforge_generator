@@ -1,6 +1,6 @@
 # CurseForge Badge & Chart Generator Module
 
-A Joomla 6 site module that provides an interactive **Generator Lab** for CurseForge Downloads Action badges and charts. Designed to match the look, feel, and behavior of the [GitHub Downloads Action Generator Lab](https://www.justagwas.com/projects/gda/). Uses AJAX for server-side badge and chart generation with live color pickers.
+A Joomla 5/6 site module that provides an interactive **Generator Lab** for CurseForge Downloads Action badges and charts. Designed to match the look, feel, and behavior of the [GitHub Downloads Action Generator Lab](https://www.justagwas.com/projects/gda/). Uses AJAX for server-side badge and chart generation with live color pickers.
 
 ## Purpose
 
@@ -16,7 +16,7 @@ This module lets visitors generate CurseForge badge and chart URLs directly on y
 - **Toggle switch**: Primary/matrix chart mode toggle
 - **Copy buttons**: One-click copy for Markdown and URL output
 - **Configurable defaults**: Module parameters set default owner, repository, and branch values
-- **Joomla 6 compatible**: Uses WebAssetManager for proper CSS/JS loading
+- **Joomla 5/6 compatible**: Uses WebAssetManager for proper CSS/JS loading
 - **Zero 3rd-party Joomla extensions required**: Works as a standalone module
 - **Auto-updates**: Registered with update server for seamless version updates
 
@@ -67,7 +67,7 @@ Advanced: Module Class Suffix, Alternate Layout.
 ## Development & Testing
 
 1. Edit files in the module directory.
-2. Test locally in a Joomla 6 site by copying the folder to `modules/mod_curseforge_generator/` or zipping and reinstalling.
+2. Test locally in a Joomla 5/6 site by copying the folder to `modules/mod_curseforge_generator/` or zipping and reinstalling.
 3. Verify the form renders, AJAX generation works, badge/chart previews load, and copy buttons work.
 4. Bump `<version>` in `mod_curseforge_generator.xml` when preparing a new release.
 5. Run the **Package and Release Module** workflow manually to create a distributable ZIP.

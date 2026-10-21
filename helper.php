@@ -18,25 +18,7 @@ class ModcurseforgeGeneratorHelper
     private const SAFE_COLOR = '/^[0-9A-Fa-f]{6}$/';
 
     /**
-     * Resolve the GitHub organisation/user that owns the repositories.
-     * Accepts "https://github.com/N6REJ", "github.com/N6REJ", "N6REJ" or
-     * "N6REJ/mod_curseforge_generator" (only the first path segment is used).
-     *
-     * @param   \Joomla\Registry\Registry  $params
-     *
-     * @return  string
-     */
-    public static function getOwner($params)
-    {
-        $owner = trim((string) $params->get('repo_owner'));
-        $owner = preg_replace('#^(?:https?://)?(?:www\.)?github\.com/#i', '', $owner);
-        $owner = explode('/', trim($owner, '/ '))[0];
-
-        return $owner !== '' ? $owner : 'N6REJ';
-    }
-
-    /**
-     * Build the raw GitHub URL for a badge or chart image.
+     * Build the raw GitHub URL for a JSON data file.
      *
      * @param   string  $owner   GitHub owner
      * @param   string  $repo    Repository name
@@ -161,13 +143,11 @@ class ModcurseforgeGeneratorHelper
         $app   = Factory::getApplication();
         $input = $app->input;
 
-        $post     = $input->post;
-        $owner    = $post->get('owner', '', 'STRING');
-        $repo     = $post->get('repo', '', 'STRING');
-        $branch   = $post->get('branch', '', 'STRING');
+        $post  = $input->post;
+        $owner = $post->get('owner', '', 'STRING');
+        $repo  = $post->get('repo', '', 'STRING');
+        $branch = $post->get('branch', '', 'STRING');
         $jsonPath = $post->get('jsonpath', 'curseforge/downloads.json', 'STRING');
-        $chartPath = $post->get('chartpath', 'curseforge/downloads-trend.svg', 'STRING');
-        $chartDir = $post->get('chartdir', 'curseforge/charts', 'STRING');
 
         // Badge fields
         $metric = $post->get('metric', 'total|$.stats.total|0A7EA4', 'STRING');
@@ -176,15 +156,17 @@ class ModcurseforgeGeneratorHelper
         $style  = $post->get('style', 'flat-square', 'STRING');
 
         // Chart fields
-        $chartType  = $post->get('charttype', 'total-trend', 'STRING');
-        $theme      = $post->get('theme', 'slate', 'STRING');
+        $chartPath = $post->get('chartpath', 'curseforge/downloads-trend.svg', 'STRING');
+        $chartDir  = $post->get('chartdir', 'curseforge/charts', 'STRING');
+        $chartType = $post->get('charttype', 'total-trend', 'STRING');
+        $theme     = $post->get('theme', 'slate', 'STRING');
         $usePrimary = (bool) $post->get('primary', false, 'BOOLEAN');
 
         // Sanitize
-        $owner     = self::sanitizeSlug($owner, 'OWNER');
-        $repo      = self::sanitizeSlug($repo, 'REPOSITORY');
-        $branch    = self::sanitizeSlug($branch, 'stats-data');
-        $jsonPath  = self::sanitizePath($jsonPath, 'curseforge/downloads.json');
+        $owner    = self::sanitizeSlug($owner, 'OWNER');
+        $repo     = self::sanitizeSlug($repo, 'REPOSITORY');
+        $branch   = self::sanitizeSlug($branch, 'stats-data');
+        $jsonPath = self::sanitizePath($jsonPath, 'curseforge/downloads.json');
         $chartPath = self::sanitizePath($chartPath, 'curseforge/downloads-trend.svg');
         $chartDir  = self::sanitizePath($chartDir, 'curseforge/charts');
 
