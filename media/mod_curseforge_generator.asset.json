@@ -9,22 +9,15 @@
             "name": "mod_curseforge_generator.style",
             "type": "style",
             "version": "2026.10.21",
-            "description": "CurseForge Generator module CSS styles",
             "uri": "mod_curseforge_generator/css/style.css",
-            "dependencies": [
-                "bootstrap.css"
-            ]
+            "dependencies": []
         },
         {
             "name": "mod_curseforge_generator.script",
             "type": "script",
             "version": "2026.10.21",
-            "description": "CurseForge Generator module JavaScript",
             "uri": "mod_curseforge_generator/js/curseforge-generator.js",
-            "dependencies": [
-                "core",
-                "bootstrap.dropdown"
-            ],
+            "dependencies": [],
             "attributes": {
                 "defer": true
             }
@@ -33,7 +26,6 @@
             "name": "mod_curseforge_generator",
             "type": "preset",
             "version": "2026.10.21",
-            "description": "CurseForge Generator module preset - loads all CSS and JS assets",
             "dependencies": [
                 "mod_curseforge_generator.style",
                 "mod_curseforge_generator.script"

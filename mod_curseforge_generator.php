@@ -20,9 +20,17 @@ $defaultRepo   = $params->get('default_repo', 'curseforge-downloads-action');
 $defaultBranch = $params->get('default_branch', 'stats-data');
 $defaultStyle  = $params->get('default_style', 'flat-square');
 
-// 3. Register and bind module asset dependencies
+// 3. Register and bind module asset dependencies safely
 $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-$wa->getRegistry()->addExtensionRegistryFile('mod_curseforge_generator');
+
+// Force-load core Bootstrap framework components via PHP to bypass JSON asset conflicts
+$wa->useAsset('style', 'bootstrap.css');
+$wa->useAsset('script', 'bootstrap.dropdown');
+
+// Explicitly register the physical asset config file from your media path
+$wa->getRegistry()->addRegistryFile(JPATH_SITE . '/media/mod_curseforge_generator/mod_curseforge_generator.asset.json');
+
+// Safely execute your flattened custom module asset preset
 $wa->usePreset('mod_curseforge_generator');
 
 // 4. Generate URL endpoints and capture URL state params
