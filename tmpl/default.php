@@ -12,20 +12,17 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\URI\URI;
 
-// Load Web Assets using the module's Web Asset library
+// Load Bootstrap 5 via Web Asset Manager (built-in, no registry issues)
 $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-try
-{
-	$wa->getRegistry()->addExtensionRegistryFile('mod_curseforge_generator');
-	$wa->use('mod_curseforge_generator');
-}
-catch (\Exception $e)
-{
-	// Fallback: register assets manually if the registry file is not found
-	$wa->registerAndUseStyle('mod_curseforge_generator.style', 'mod_curseforge_generator/css/style.css', [], [], ['bootstrap']);
-	$wa->registerAndUseScript('mod_curseforge_generator.script', 'mod_curseforge_generator/js/curseforge-generator.js', [], ['defer' => true], ['bootstrap.dropdown#script', 'mod_curseforge_generator.style']);
-}
+$wa->usePreset('bootstrap');
+
+// Load module-specific assets directly using media folder path
+$doc = Factory::getDocument();
+$mediaUrl = URI::root() . 'media/mod_curseforge_generator/';
+$doc->addStyleSheet($mediaUrl . 'css/style.css');
+$doc->addScript($mediaUrl . 'js/curseforge-generator.js', [], ['defer' => true]);
 
 // AJAX endpoint URL
 $ajaxUrl = Route::_('index.php?format=json&xajax=1', false);
