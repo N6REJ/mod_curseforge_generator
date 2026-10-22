@@ -28,12 +28,13 @@
     if (!picker || !text) return;
 
     picker.addEventListener("input", function () {
-      text.value = picker.value.replace("#", "");
+      text.value = picker.value.replace("#", "").toUpperCase();
       scheduleGenerate();
     });
 
     text.addEventListener("input", function () {
-      var hex = text.value.replace("#", "");
+      var hex = text.value.replace("#", "").toUpperCase();
+      text.value = hex;
       if (/^[0-9A-Fa-f]{6}$/.test(hex)) {
         picker.value = "#" + hex;
       }
@@ -186,7 +187,7 @@
     formData.append("color", value("curseforge-color", "0A7EA4"));
     formData.append("style", value("curseforge-style", "flat-square"));
     formData.append("provider", "raw");
-    formData.append("labelcolor", "555555");
+    formData.append("labelcolor", value("curseforge-label-color", "555555"));
     formData.append("logo", "");
     formData.append("cache", "0");
     formData.append("charttype", value("curseforge-charttype", "total-trend"));

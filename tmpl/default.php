@@ -92,14 +92,21 @@ use Joomla\CMS\Router\Route;
                             <input type="text" class="form-control" id="curseforge-label" value="downloads/total" spellcheck="false" />
                         </div>
                         <div class="col-md-4">
-                            <label for="curseforge-color" class="form-label"><?php echo Text::_('MOD_curseforge_GENERATOR_COLOR'); ?></label>
+                            <label for="curseforge-label-color" class="form-label"><?php echo Text::_('MOD_curseforge_GENERATOR_LABEL_COLOR'); ?></label>
                             <div class="input-group">
-                                <input type="color" class="form-control form-control-color w-auto p-1" id="curseforge-color-picker" value="#0A7EA4" title="Choose color" />
-                                <input type="text" class="form-control" id="curseforge-color" value="0A7EA4" spellcheck="false" maxlength="6" />
+                                <input type="color" class="form-control form-control-color" id="curseforge-label-color-picker" value="#555555" title="Choose label color" />
+                                <input type="text" class="form-control" id="curseforge-label-color" value="555555" spellcheck="false" maxlength="6" />
                             </div>
                         </div>
                     </div>
                     <div class="row g-3 mb-3">
+                        <div class="col-md-4">
+                            <label for="curseforge-color" class="form-label"><?php echo Text::_('MOD_curseforge_GENERATOR_COLOR'); ?></label>
+                            <div class="input-group">
+                                <input type="color" class="form-control form-control-color" id="curseforge-color-picker" value="#0A7EA4" title="Choose color" />
+                                <input type="text" class="form-control" id="curseforge-color" value="0A7EA4" spellcheck="false" maxlength="6" />
+                            </div>
+                        </div>
                         <div class="col-md-4">
                             <label for="curseforge-style" class="form-label"><?php echo Text::_('MOD_curseforge_GENERATOR_STYLE'); ?></label>
                             <select class="form-select" id="curseforge-style">

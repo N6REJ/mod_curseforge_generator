@@ -1,0 +1,44 @@
+/*
+  CurseForge Downloads Action - Badge & Chart Generator Styles
+  ------------------------------------------------------------------
+  Module-specific overrides for Bootstrap 5 / Cassiopeia layouts.
+*/
+
+.mod-curseforge-generator .input-group .form-control-color {
+  /* Fixed swatch column so the colour well never competes with the hex field */
+  flex: 0 0 3.5rem;
+  width: 3.5rem;
+  max-width: 3.5rem;
+
+  /* Stretch to the height of the neighbouring input instead of guessing a height */
+  height: auto;
+  align-self: stretch;
+  padding: 0;
+  position: relative;
+}
+
+/*
+  Some templates (e.g. cassiopeia_extended) force the painted swatch to a fixed
+  1.5em height and give it a chip-like radius. Inside a stretched field that
+  leaves the colour block floating at the top of the control.
+
+  Positioning the swatch wrapper over the whole control and letting the swatch
+  fill it guarantees the colour is perfectly centred, whatever the template does.
+*/
+.mod-curseforge-generator .form-control-color::-webkit-color-swatch-wrapper {
+  position: absolute;
+  inset: 0;
+  padding: 0;
+}
+
+.mod-curseforge-generator .form-control-color::-webkit-color-swatch {
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+}
+
+/* Code blocks for output display */
+.mod-curseforge-generator code {
+  white-space: pre-wrap;
+  word-break: break-all;
+}

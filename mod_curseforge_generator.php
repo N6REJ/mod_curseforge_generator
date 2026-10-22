@@ -27,6 +27,9 @@ $mediaUrl = Joomla\CMS\URI\URI::root() . 'media/mod_curseforge_generator/';
 
 $doc->addScript($mediaUrl . 'js/curseforge-generator.js', [], ['defer' => true]);
 
+// Module stylesheet (colour well alignment, output blocks)
+$wa->registerAndUseStyle('mod_curseforge_generator', 'mod_curseforge_generator/curseforge-generator.css');
+
 // 4. Generate URL endpoints and capture URL state params
 $ajaxUrl   = Route::_('index.php?option=com_ajax&module=curseforge_generator&format=raw', false);
 $urlMetric = $input->get('badge-metric', '', 'STRING');
