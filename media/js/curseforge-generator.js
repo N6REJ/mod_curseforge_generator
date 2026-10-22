@@ -53,7 +53,8 @@
   function switchTab(target) {
     // Update tab buttons
     for (var i = 0; i < tabs.length; i++) {
-      tabs[i].classList.remove("active");
+      tabs[i].classList.remove("active", "bg-primary");
+      tabs[i].classList.add("bg-info");
       tabs[i].setAttribute("aria-selected", "false");
     }
     // Update panels
@@ -66,7 +67,8 @@
     // Activate target
     for (var j = 0; j < tabs.length; j++) {
       if (tabs[j].getAttribute("data-tab") === target) {
-        tabs[j].classList.add("active");
+        tabs[j].classList.add("active", "bg-primary");
+        tabs[j].classList.remove("bg-info");
         tabs[j].setAttribute("aria-selected", "true");
         break;
       }
@@ -148,11 +150,9 @@
     formData.append("label", value("curseforge-label", "downloads/total"));
     formData.append("color", value("curseforge-color", "0A7EA4"));
     formData.append("style", value("curseforge-style", "flat-square"));
-    formData.append("chartpath", "curseforge/downloads-trend.svg");
-    formData.append("chartdir", "curseforge/charts");
     formData.append("charttype", value("curseforge-charttype", "total-trend"));
     formData.append("theme", value("curseforge-theme", "slate"));
-    formData.append("primary", el("curseforge-primary") && el("curseforge-primary").checked ? "1" : "0");
+    formData.append("chartdata", value("curseforge-chartdata", ""));
     // CSRF token
     var csrfToken = Joomla.getOptions("system.csrf.token") || Joomla.getOptions("csrf.token");
     if (csrfToken) {
@@ -230,6 +230,12 @@
     if (content && placeholder && img) {
       img.src = chart.url;
       showPreview(content, placeholder, true);
+    }
+  }
+
+  function setPreviewStatus(node) {
+    if (node && node.getAttribute("data-error-text")) {
+      node.textContent = node.getAttribute("data-error-text");
     }
   }
 
@@ -328,6 +334,7 @@
     badgeImg.addEventListener("error", function () {
       var content = el("curseforge-badge-content");
       var placeholder = el("curseforge-badge-placeholder");
+      setPreviewStatus(el("curseforge-badge-status"));
       if (content && placeholder) showPreview(content, placeholder, false);
     });
   }
@@ -342,6 +349,7 @@
     chartImg.addEventListener("error", function () {
       var content = el("curseforge-chart-content");
       var placeholder = el("curseforge-chart-placeholder");
+      setPreviewStatus(el("curseforge-chart-status"));
       if (content && placeholder) showPreview(content, placeholder, false);
     });
   }

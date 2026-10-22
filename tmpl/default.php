@@ -32,12 +32,12 @@ use Joomla\CMS\Router\Route;
         <!-- Tabs: Badge / Chart -->
         <ul class="nav nav-tabs mb-3" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active nav-tab-btn" role="tab" data-tab="badge" aria-selected="true">
+                <button class="nav-link active nav-tab-btn bg-primary text-white" role="tab" data-tab="badge" aria-selected="true">
                     <?php echo Text::_('MOD_curseforge_GENERATOR_TAB_BADGE'); ?>
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link nav-tab-btn" role="tab" data-tab="chart" aria-selected="false">
+                <button class="nav-link nav-tab-btn bg-info text-white" role="tab" data-tab="chart" aria-selected="false">
                     <?php echo Text::_('MOD_curseforge_GENERATOR_TAB_CHART'); ?>
                 </button>
             </li>
@@ -119,7 +119,7 @@ use Joomla\CMS\Router\Route;
                         </div>
                         <div class="card-body text-center py-4" id="curseforge-badge-placeholder">
                             <svg class="text-muted mb-2" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M6 12h.01M10 12h.01M14 12h.01M18 12h.01M6 16h12"/></svg>
-                            <div class="text-muted small"><?php echo Text::_('MOD_curseforge_GENERATOR_WAITING'); ?></div>
+                            <div class="text-muted small" id="curseforge-badge-status" data-error-text="<?php echo Text::_('MOD_curseforge_GENERATOR_PREVIEW_UNAVAILABLE'); ?>"><?php echo Text::_('MOD_curseforge_GENERATOR_WAITING'); ?></div>
                         </div>
                         <div class="card-body text-center d-none" id="curseforge-badge-content">
                             <img class="img-fluid" id="curseforge-badge-img" alt="<?php echo Text::_('MOD_curseforge_GENERATOR_BADGE_PREVIEW'); ?>" />
@@ -177,13 +177,11 @@ use Joomla\CMS\Router\Route;
                         </div>
                     </div>
 
-                    <div class="form-check form-switch mb-3">
-                        <input class="form-check-input" type="checkbox" id="curseforge-primary" />
-                        <label class="form-check-label small text-body-secondary" for="curseforge-primary">
-                            <?php echo Text::_('MOD_curseforge_GENERATOR_PRIMARY'); ?>
-                        </label>
+                    <div class="mb-3">
+                        <label for="curseforge-chartdata" class="form-label"><?php echo Text::_('MOD_curseforge_GENERATOR_CHARTDATA'); ?></label>
+                        <textarea class="form-control font-monospace" id="curseforge-chartdata" rows="6" spellcheck="false" placeholder="2026-10-01 1200&#10;2026-10-02 1250"></textarea>
+                        <div class="form-text"><?php echo Text::_('MOD_curseforge_GENERATOR_CHARTDATA_DESC'); ?></div>
                     </div>
-                    <p class="text-muted small mb-3"><?php echo Text::_('MOD_curseforge_GENERATOR_PRIMARY_HINT'); ?></p>
 
                     <!-- Chart Preview -->
                     <div class="card mb-3">
@@ -192,7 +190,7 @@ use Joomla\CMS\Router\Route;
                         </div>
                         <div class="card-body text-center py-4" id="curseforge-chart-placeholder">
                             <svg class="text-muted mb-2" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>
-                            <div class="text-muted small"><?php echo Text::_('MOD_curseforge_GENERATOR_WAITING'); ?></div>
+                            <div class="text-muted small" id="curseforge-chart-status" data-error-text="<?php echo Text::_('MOD_curseforge_GENERATOR_PREVIEW_UNAVAILABLE'); ?>"><?php echo Text::_('MOD_curseforge_GENERATOR_WAITING'); ?></div>
                         </div>
                         <div class="card-body text-center d-none" id="curseforge-chart-content">
                             <img class="img-fluid" id="curseforge-chart-img" alt="<?php echo Text::_('MOD_curseforge_GENERATOR_CHART_PREVIEW'); ?>" />

@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
 
 class ModCurseforgeGeneratorHelper
 {
@@ -119,18 +120,156 @@ class ModCurseforgeGeneratorHelper
     }
 
     /**
-     * Build a chart image URL from the repository.
+     * Keep a value only if it is one of the allowed choices.
      *
-     * @param   string  $owner      GitHub owner
-     * @param   string  $repo       Repository name
-     * @param   string  $branch     Git branch
-     * @param   string  $chartPath  Path to chart SVG in the repository
+     * @param   string  $text     Raw input
+     * @param   array   $allowed  Allowed values
+     * @param   string  $fallback Default if invalid
      *
      * @return  string
      */
-    public static function buildChartUrl($owner, $repo, $branch, $chartPath)
+    public static function sanitizeChoice($text, array $allowed, $fallback)
     {
-        return self::getRawUrl($owner, $repo, $branch, $chartPath);
+        return in_array($text, $allowed, true) ? $text : $fallback;
+    }
+
+    /**
+     * Build the module endpoint URL that renders the chart SVG.
+     *
+     * @param   string  $chartType  Chart type
+     * @param   string  $theme      Chart theme
+     * @param   string  $chartData  Date and count lines
+     *
+     * @return  string
+     */
+    public static function buildChartUrl($chartType, $theme, $chartData, $color)
+    {
+        return Uri::root() . 'index.php?option=com_ajax&module=curseforge_generator&method=chart&format=raw'
+            . '&charttype=' . urlencode($chartType)
+            . '&theme=' . urlencode($theme)
+            . '&color=' . urlencode($color)
+            . '&chartdata=' . urlencode($chartData);
+    }
+
+    /**
+     * Parse date and count lines (YYYY-MM-DD count) into a sorted map.
+     *
+     * @param   string  $text  Raw multi-line input
+     *
+     * @return  array
+     */
+    public static function parseChartData($text)
+    {
+        $points = [];
+
+        foreach (preg_split('/\r\n|\r|\n/', (string) $text) as $line) {
+            if (preg_match('/^\s*(\d{4}-\d{2}-\d{2})[\s,;]+(\d+)\s*$/', $line, $matches)) {
+                $points[$matches[1]] = (int) $matches[2];
+            }
+        }
+
+        ksort($points);
+
+        return $points;
+    }
+
+    /**
+     * Turn the totals into the labels and values for the chosen chart type.
+     *
+     * @param   array   $points     Map of date to total
+     * @param   string  $chartType  total-trend, daily, weekly, monthly or yearly
+     *
+     * @return  array  Two arrays: labels and values
+     */
+    public static function aggregateChartData(array $points, $chartType)
+    {
+        $labels = array_keys($points);
+        $values = array_values($points);
+
+        if ($chartType === 'total-trend') {
+            return [$labels, $values];
+        }
+
+        $deltas = [];
+
+        for ($i = 1; $i < count($values); $i++) {
+            $deltas[$labels[$i]] = $values[$i] - $values[$i - 1];
+        }
+
+        if ($chartType === 'daily') {
+            return [array_keys($deltas), array_values($deltas)];
+        }
+
+        $groups = [];
+
+        if ($chartType === 'weekly') {
+            foreach (array_chunk($deltas, 7, true) as $chunk) {
+                $groups[array_key_first($chunk)] = array_sum($chunk);
+            }
+        } else {
+            $length = $chartType === 'monthly' ? 7 : 4;
+
+            foreach ($deltas as $date => $delta) {
+                $key = substr($date, 0, $length);
+                $groups[$key] = ($groups[$key] ?? 0) + $delta;
+            }
+        }
+
+        return [array_keys($groups), array_values($groups)];
+    }
+
+    /**
+     * Build an SVG line chart from labels and values.
+     *
+     * @param   array   $labels     Labels in order
+     * @param   array   $values     Numeric values
+     * @param   string  $chartType  Chart type, used in the title
+     * @param   string  $theme      black, slate or orange
+     *
+     * @return  string
+     */
+    public static function buildChartSvg(array $labels, array $values, $chartType, $theme, $color)
+    {
+        $palettes = [
+            'black'  => ['background' => '#111111', 'text' => '#cccccc'],
+            'slate'  => ['background' => '#334155', 'text' => '#e2e8f0'],
+            'orange' => ['background' => '#7c2d12', 'text' => '#ffedd5'],
+        ];
+        $palette = $palettes[$theme] ?? $palettes['slate'];
+
+        $width  = 600;
+        $height = 300;
+        $pad    = 40;
+        $innerW = $width - 2 * $pad;
+        $innerH = $height - 2 * $pad;
+        $count  = count($values);
+        $maxV   = $count ? max(max($values), 1) : 1;
+
+        $coords = [];
+
+        foreach ($values as $i => $value) {
+            $x = $count > 1 ? $pad + $i * $innerW / ($count - 1) : $pad + $innerW / 2;
+            $y = $pad + $innerH - ($value / $maxV) * $innerH;
+            $coords[] = round($x, 1) . ',' . round($y, 1);
+        }
+
+        $title = htmlspecialchars('Downloads ' . $chartType, ENT_QUOTES, 'UTF-8');
+        $text  = 'fill="' . $palette['text'] . '" font-family="sans-serif"';
+
+        $svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' . $width . '" height="' . $height . '" viewBox="0 0 ' . $width . ' ' . $height . '">'
+            . '<rect width="100%" height="100%" fill="' . $palette['background'] . '"/>'
+            . '<text x="' . $pad . '" y="25" ' . $text . ' font-size="14">' . $title . '</text>';
+
+        if ($count) {
+            $svg .= '<polyline fill="none" stroke="#' . $color . '" stroke-width="2" points="' . implode(' ', $coords) . '"/>';
+            $svg .= '<text x="' . $pad . '" y="' . ($height - 10) . '" ' . $text . ' font-size="11">' . htmlspecialchars((string) $labels[0], ENT_QUOTES, 'UTF-8') . '</text>';
+            $svg .= '<text x="' . ($width - $pad) . '" y="' . ($height - 10) . '" text-anchor="end" ' . $text . ' font-size="11">' . htmlspecialchars((string) $labels[$count - 1], ENT_QUOTES, 'UTF-8') . '</text>';
+            $svg .= '<text x="' . ($width - $pad) . '" y="25" text-anchor="end" fill="#' . $color . '" font-family="sans-serif" font-size="14">' . (int) $values[$count - 1] . '</text>';
+        } else {
+            $svg .= '<text x="' . ($width / 2) . '" y="' . ($height / 2) . '" text-anchor="middle" ' . $text . ' font-size="14">No data</text>';
+        }
+
+        return $svg . '</svg>';
     }
 
     /**
@@ -156,19 +295,15 @@ class ModCurseforgeGeneratorHelper
         $style  = $post->get('style', 'flat-square', 'STRING');
 
         // Chart fields
-        $chartPath = $post->get('chartpath', 'curseforge/downloads-trend.svg', 'STRING');
-        $chartDir  = $post->get('chartdir', 'curseforge/charts', 'STRING');
-        $chartType = $post->get('charttype', 'total-trend', 'STRING');
-        $theme     = $post->get('theme', 'slate', 'STRING');
-        $usePrimary = (bool) $post->get('primary', false, 'BOOLEAN');
+        $chartType = self::sanitizeChoice($post->get('charttype', 'total-trend', 'STRING'), ['total-trend', 'daily', 'weekly', 'monthly', 'yearly'], 'total-trend');
+        $theme     = self::sanitizeChoice($post->get('theme', 'slate', 'STRING'), ['black', 'slate', 'orange'], 'slate');
+        $chartData = $post->get('chartdata', '', 'RAW');
 
         // Sanitize
         $owner    = self::sanitizeSlug($owner, 'OWNER');
         $repo     = self::sanitizeSlug($repo, 'REPOSITORY');
         $branch   = self::sanitizeSlug($branch, 'stats-data');
         $jsonPath = self::sanitizePath($jsonPath, 'curseforge/downloads.json');
-        $chartPath = self::sanitizePath($chartPath, 'curseforge/downloads-trend.svg');
-        $chartDir  = self::sanitizePath($chartDir, 'curseforge/charts');
 
         // Parse metric
         $metricParts  = explode('|', $metric);
@@ -183,13 +318,7 @@ class ModCurseforgeGeneratorHelper
         $badgeMd  = '!' . $label . '(' . $badgeUrl . ')';
 
         // Build chart
-        if ($usePrimary) {
-            $chartTarget = $chartPath;
-        } else {
-            $chartTarget = $chartDir . '/' . $chartType . '--' . $theme . '.svg';
-        }
-
-        $chartUrl = self::buildChartUrl($owner, $repo, $branch, $chartTarget);
+        $chartUrl = self::buildChartUrl($chartType, $theme, $chartData, $color);
         $chartMd  = '![Downloads ' . $chartType . ' ' . $theme . '](' . $chartUrl . ')';
 
         $response = [
@@ -208,5 +337,27 @@ class ModCurseforgeGeneratorHelper
         ];
 
         return json_encode($response);
+    }
+
+    /**
+     * Render the chart SVG for the com_ajax chart method.
+     *
+     * @return  string
+     */
+    public static function chartAjax()
+    {
+        $app   = Factory::getApplication();
+        $input = $app->input;
+
+        $chartType = self::sanitizeChoice($input->getCmd('charttype', 'total-trend'), ['total-trend', 'daily', 'weekly', 'monthly', 'yearly'], 'total-trend');
+        $theme     = self::sanitizeChoice($input->getCmd('theme', 'slate'), ['black', 'slate', 'orange'], 'slate');
+        $chartData = $input->getString('chartdata', '');
+        $color     = self::sanitizeColor($input->getString('color', ''), '0A7EA4');
+
+        [$labels, $values] = self::aggregateChartData(self::parseChartData($chartData), $chartType);
+
+        $app->setHeader('Content-Type', 'image/svg+xml; charset=utf-8', true);
+
+        return self::buildChartSvg($labels, $values, $chartType, $theme, $color);
     }
 }
