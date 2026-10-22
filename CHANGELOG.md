@@ -133,6 +133,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Update version to 2026.10.22 [skip ci] ([5a19b09](https://github.com/N6REJ/mod_curseforge_generator/commit/5a19b09))
 * Update default repository examples to mod_curseforge_generator and main branch ([3ee70dd](https://github.com/N6REJ/mod_curseforge_generator/commit/3ee70dd))
 * Merge remote-tracking branch 'origin/main' ([c787cd1](https://github.com/N6REJ/mod_curseforge_generator/commit/c787cd1))
+* Update version to 2026.10.22 [skip ci] ([05d0d8a](https://github.com/N6REJ/mod_curseforge_generator/commit/05d0d8a))
+* Update default repository example from mod_curseforge_generator to Bears-boon-viewer ([b7df017](https://github.com/N6REJ/mod_curseforge_generator/commit/b7df017))
+* Merge remote-tracking branch 'origin/main' ([56286e7](https://github.com/N6REJ/mod_curseforge_generator/commit/56286e7))
 
 ### Fixed
 
