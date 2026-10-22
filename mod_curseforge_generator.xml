@@ -52,7 +52,7 @@
 					type="text"
 					label="MOD_curseforge_GENERATOR_REPO_LABEL"
 					description="MOD_curseforge_GENERATOR_REPO_DESC"
-					default="mod_curseforge_generator"
+					default="Bears-boon-viewer"
 					size="30"
 				/>
 				<field

@@ -21,7 +21,7 @@ $input = Factory::getApplication()->input;
 
 // 2. Fetch module configuration fallback variables
 $defaultOwner    = $params->get('default_owner', 'N6REJ');
-$defaultRepo     = $params->get('default_repo', 'mod_bears_pricing_tables');
+$defaultRepo     = $params->get('default_repo', 'Bears-boon-viewer');
 $defaultBranch   = $params->get('default_branch', 'main');
 $defaultJsonPath = $params->get('default_jsonpath', 'stats/downloads.json');
 $defaultStyle    = $params->get('default_style', 'flat-square');
