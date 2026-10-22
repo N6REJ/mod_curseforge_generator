@@ -1,8 +1,8 @@
 /*
-  CurseForge Downloads Action - Badge Generator Script
+  CurseForge Downloads Action - Badge & Chart Generator Script
   ------------------------------------------------------------------
-  AJAX-based generator for dynamic badge preview and output.
-  Badge URL construction is handled server-side.
+  AJAX-based generator for dynamic badge/chart previews and output.
+  Badge and chart URL construction is handled server-side.
 */
 (function () {
   "use strict";
@@ -21,7 +21,7 @@
     return node && typeof node.value === "string" ? node.value.trim() : fallback;
   }
 
-  // ---- Color picker sync ----
+  // ---- Colour picker sync ----
   function syncColorPicker(pickerId, textId) {
     var picker = el(pickerId);
     var text = el(textId);
@@ -43,30 +43,46 @@
   }
 
   syncColorPicker("curseforge-color-picker", "curseforge-color");
+  syncColorPicker("curseforge-label-color-picker", "curseforge-label-color");
 
-  // ---- Metric color auto-update ----
+  // ---- Metric defaults (colour + label) ----
+  // The option value is packed by the helper as: key|query|color|label
+  // Colours follow the justagwas GDA reference dashboard.
+  function applyMetricDefaults(metricValue) {
+    var parts = (metricValue || "").split("|");
+
+    if (!parts[0]) {
+      return;
+    }
+
+    var color = parts[2] || "";
+    var label = parts[3] || ("downloads/" + parts[0]);
+
+    if (/^[0-9A-Fa-f]{6}$/.test(color)) {
+      var colorText = el("curseforge-color");
+      var colorPicker = el("curseforge-color-picker");
+
+      if (colorText) {
+        colorText.value = color.toUpperCase();
+      }
+
+      if (colorPicker) {
+        colorPicker.value = "#" + color.toUpperCase();
+      }
+    }
+
+    var labelInput = el("curseforge-label");
+
+    if (labelInput && labelInput.dataset.userEdited !== "true") {
+      labelInput.value = label;
+    }
+  }
+
   var metricSelect = el("curseforge-metric");
+
   if (metricSelect) {
     metricSelect.addEventListener("change", function () {
-      var val = metricSelect.value || "";
-      var parts = val.split("|");
-      if (parts.length >= 3 && /^[0-9A-Fa-f]{6}$/.test(parts[2])) {
-        var colorText = el("curseforge-color");
-        var colorPicker = el("curseforge-color-picker");
-        if (colorText) {
-          colorText.value = parts[2].toUpperCase();
-        }
-        if (colorPicker) {
-          colorPicker.value = "#" + parts[2].toUpperCase();
-        }
-      }
-      if (parts.length >= 1) {
-        var labelInput = el("curseforge-label");
-        if (labelInput && (!labelInput.dataset.userEdited || labelInput.dataset.userEdited === "false")) {
-          var metricName = parts[0];
-          labelInput.value = "downloads/" + metricName;
-        }
-      }
+      applyMetricDefaults(metricSelect.value);
       scheduleGenerate();
     });
   }
@@ -127,12 +143,13 @@
 
   // ---- Apply URL parameters to pre-fill form ----
   if (config.urlMetric) {
-    var metricSelect = el("curseforge-metric");
-    if (metricSelect) {
-      for (var m = 0; m < metricSelect.options.length; m++) {
-        var parts = metricSelect.options[m].value.split("|");
+    var metricSelectUrl = el("curseforge-metric");
+    if (metricSelectUrl) {
+      for (var m = 0; m < metricSelectUrl.options.length; m++) {
+        var parts = metricSelectUrl.options[m].value.split("|");
         if (parts[0] === config.urlMetric) {
-          metricSelect.selectedIndex = m;
+          metricSelectUrl.selectedIndex = m;
+          applyMetricDefaults(metricSelectUrl.options[m].value);
           break;
         }
       }
@@ -142,7 +159,7 @@
   if (config.urlColor) {
     var colorText = el("curseforge-color");
     var colorPicker = el("curseforge-color-picker");
-    var cleanColor = config.urlColor.replace("#", "");
+    var cleanColor = config.urlColor.replace("#", "").toUpperCase();
     if (/^[0-9A-Fa-f]{6}$/.test(cleanColor)) {
       if (colorText) colorText.value = cleanColor;
       if (colorPicker) colorPicker.value = "#" + cleanColor;
@@ -153,6 +170,7 @@
     var labelInput = el("curseforge-label");
     if (labelInput) {
       labelInput.value = decodeURIComponent(config.urlLabel);
+      labelInput.dataset.userEdited = "true";
     }
   }
 
@@ -171,6 +189,10 @@
     generateTimer = setTimeout(doGenerate, 300);
   }
 
+  function cacheBust(url) {
+    return url + (url.indexOf("?") >= 0 ? "&" : "?") + "_t=" + Date.now() + "_" + Math.random().toString(36).substr(2, 9);
+  }
+
   function doGenerate() {
     if (!ajaxUrl) {
       setStatus(Joomla.Text._("MOD_curseforge_GENERATOR_AJAX_ERROR") || "AJAX endpoint not configured.", true);
@@ -182,7 +204,7 @@
     formData.append("repo", value("curseforge-repo", ""));
     formData.append("branch", value("curseforge-branch", ""));
     formData.append("jsonpath", "curseforge/downloads.json");
-    formData.append("metric", value("curseforge-metric", "total|$.stats.total|0A7EA4"));
+    formData.append("metric", value("curseforge-metric", "total|$.stats.total|0A7EA4|downloads/total"));
     formData.append("label", value("curseforge-label", "downloads/total"));
     formData.append("color", value("curseforge-color", "0A7EA4"));
     formData.append("style", value("curseforge-style", "flat-square"));
@@ -252,8 +274,7 @@
     var img = el("curseforge-badge-img");
 
     if (content && placeholder && img) {
-      var newUrl = badge.url + (badge.url.indexOf('?') >= 0 ? '&' : '?') + '_t=' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-      img.src = newUrl;
+      img.src = cacheBust(badge.url);
       showPreview(content, placeholder, true);
     }
   }
@@ -269,7 +290,7 @@
     var img = el("curseforge-chart-img");
 
     if (content && placeholder && img) {
-      img.src = chart.url;
+      img.src = cacheBust(chart.url);
       showPreview(content, placeholder, true);
     }
   }

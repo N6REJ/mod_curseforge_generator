@@ -13,6 +13,9 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 
+// Metric map (single source of truth) and the first metric used as default
+$cfMetrics     = ModCurseforgeGeneratorHelper::METRICS;
+$cfFirstMetric = reset($cfMetrics);
 
 ?>
 
@@ -79,23 +82,20 @@ use Joomla\CMS\Router\Route;
                         <div class="col-md-4">
                             <label for="curseforge-metric" class="form-label"><?php echo Text::_('MOD_curseforge_GENERATOR_METRIC'); ?></label>
                             <select class="form-select" id="curseforge-metric">
-                                <option value="total|$.stats.total|0A7EA4"><?php echo Text::_('MOD_curseforge_GENERATOR_TOTAL'); ?></option>
-                                <option value="day|$.stats.day|1E8E3E"><?php echo Text::_('MOD_curseforge_GENERATOR_DAY'); ?></option>
-                                <option value="week|$.stats.week|0069C2"><?php echo Text::_('MOD_curseforge_GENERATOR_WEEK'); ?></option>
-                                <option value="month|$.stats.month|B26A00"><?php echo Text::_('MOD_curseforge_GENERATOR_MONTH'); ?></option>
-                                <option value="year|$.stats.year|6A1B9A"><?php echo Text::_('MOD_curseforge_GENERATOR_YEAR'); ?></option>
-                                <option value="profile|$.profile.defaultMode|5E35B1"><?php echo Text::_('MOD_curseforge_GENERATOR_PROFILE'); ?></option>
+                                <?php foreach ($cfMetrics as $metricKey => $metric): ?>
+                                    <option value="<?php echo htmlspecialchars($metricKey . '|' . $metric['query'] . '|' . $metric['color'] . '|' . $metric['label'], ENT_QUOTES, 'UTF-8'); ?>"><?php echo Text::_('MOD_curseforge_GENERATOR_' . strtoupper($metricKey)); ?></option>
+                                <?php endforeach; ?>
                             </select>
                         </div>
                         <div class="col-md-4">
                             <label for="curseforge-label" class="form-label"><?php echo Text::_('MOD_curseforge_GENERATOR_LABEL'); ?></label>
-                            <input type="text" class="form-control" id="curseforge-label" value="downloads/total" spellcheck="false" />
+                            <input type="text" class="form-control" id="curseforge-label" value="<?php echo htmlspecialchars($cfFirstMetric['label'], ENT_QUOTES, 'UTF-8'); ?>" data-user-edited="false" spellcheck="false" />
                         </div>
                         <div class="col-md-4">
                             <label for="curseforge-label-color" class="form-label"><?php echo Text::_('MOD_curseforge_GENERATOR_LABEL_COLOR'); ?></label>
                             <div class="input-group">
-                                <input type="color" class="form-control form-control-color" id="curseforge-label-color-picker" value="#555555" title="Choose label color" />
-                                <input type="text" class="form-control" id="curseforge-label-color" value="555555" spellcheck="false" maxlength="6" />
+                                <input type="color" class="form-control form-control-color" id="curseforge-label-color-picker" value="#<?php echo ModCurseforgeGeneratorHelper::DEFAULT_LABEL_COLOR; ?>" title="Choose label color" />
+                                <input type="text" class="form-control" id="curseforge-label-color" value="<?php echo ModCurseforgeGeneratorHelper::DEFAULT_LABEL_COLOR; ?>" spellcheck="false" maxlength="6" />
                             </div>
                         </div>
                     </div>
@@ -103,8 +103,8 @@ use Joomla\CMS\Router\Route;
                         <div class="col-md-4">
                             <label for="curseforge-color" class="form-label"><?php echo Text::_('MOD_curseforge_GENERATOR_COLOR'); ?></label>
                             <div class="input-group">
-                                <input type="color" class="form-control form-control-color" id="curseforge-color-picker" value="#0A7EA4" title="Choose color" />
-                                <input type="text" class="form-control" id="curseforge-color" value="0A7EA4" spellcheck="false" maxlength="6" />
+                                <input type="color" class="form-control form-control-color" id="curseforge-color-picker" value="#<?php echo $cfFirstMetric['color']; ?>" title="Choose color" />
+                                <input type="text" class="form-control" id="curseforge-color" value="<?php echo $cfFirstMetric['color']; ?>" spellcheck="false" maxlength="6" />
                             </div>
                         </div>
                         <div class="col-md-4">

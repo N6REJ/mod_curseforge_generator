@@ -5,6 +5,9 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ModuleHelper;
 use Joomla\CMS\Router\Route;
 
+// Module helper (metric map, colour defaults, badge/chart builders)
+require_once __DIR__ . '/helper.php';
+
 $input = Factory::getApplication()->input;
 
 // 2. Fetch module configuration fallback variables

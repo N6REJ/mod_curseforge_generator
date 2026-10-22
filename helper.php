@@ -22,13 +22,18 @@ class ModCurseforgeGeneratorHelper
     public const BADGE_STYLES = ['flat', 'flat-square', 'plastic', 'for-the-badge', 'social'];
     public const LOGO_CHOICES = ['', 'curseforge'];
 
+    /**
+     * Metric definitions: query path, default badge colour and default label.
+     * Colours follow the justagwas GDA reference dashboard:
+     * total 0A7EA4, day 1E8E3E, week 0069C2, month B26A00.
+     */
     public const METRICS = [
-        'total'   => ['query' => '$.stats.total',         'color' => '0A7EA4'],
-        'day'     => ['query' => '$.stats.day',           'color' => '1E8E3E'],
-        'week'    => ['query' => '$.stats.week',          'color' => '0069C2'],
-        'month'   => ['query' => '$.stats.month',         'color' => 'B26A00'],
-        'year'    => ['query' => '$.stats.year',          'color' => '6A1B9A'],
-        'profile' => ['query' => '$.profile.defaultMode', 'color' => '5E35B1'],
+        'total'   => ['query' => '$.stats.total',         'color' => '0A7EA4', 'label' => 'downloads/total'],
+        'day'     => ['query' => '$.stats.day',           'color' => '1E8E3E', 'label' => 'downloads/day'],
+        'week'    => ['query' => '$.stats.week',          'color' => '0069C2', 'label' => 'downloads/week'],
+        'month'   => ['query' => '$.stats.month',         'color' => 'B26A00', 'label' => 'downloads/month'],
+        'year'    => ['query' => '$.stats.year',          'color' => '6A1B9A', 'label' => 'downloads/year'],
+        'profile' => ['query' => '$.profile.defaultMode', 'color' => '5E35B1', 'label' => 'downloads/profile'],
     ];
 
     public const DEFAULT_LABEL_COLOR = '555555';
@@ -478,7 +483,7 @@ class ModCurseforgeGeneratorHelper
         }
 
         if ($owner === '' || $repo === '') {
-            return self::buildBadgeSvg($label, 'unavailable', '9f9f9f', $labelColor, $style, $logo);
+            return self::buildBadgeSvg($label, 'unavailable', $color, $labelColor, $style, $logo);
         }
 
         $data = self::fetchStats($provider, $owner, $repo, $branch, $jsonPath);
@@ -668,7 +673,7 @@ class ModCurseforgeGeneratorHelper
         $jsonPath = $post->get('jsonpath', 'curseforge/downloads.json', 'STRING');
 
         // Badge fields
-        $metric     = $post->get('metric', 'total|$.stats.total|0A7EA4', 'STRING');
+        $metric     = $post->get('metric', 'total|$.stats.total|0A7EA4|downloads/total', 'STRING');
         $label      = $post->get('label', 'downloads/total', 'STRING');
         $color      = $post->get('color', '0A7EA4', 'STRING');
         $style      = $post->get('style', 'flat-square', 'STRING');
@@ -693,15 +698,17 @@ class ModCurseforgeGeneratorHelper
         $logo     = self::sanitizeChoice($logo, self::LOGO_CHOICES, '');
         $cache    = max(0, min(86400, (int) $cache));
 
-        // Parse metric
+        // Parse metric (packed as key|query|color|label)
         $metricParts  = explode('|', $metric);
+        $metricKey    = $metricParts[0] ?? 'total';
         $defaultQuery = $metricParts[1] ?? '$.stats.total';
         $defaultColor = $metricParts[2] ?? '0A7EA4';
+        $defaultLabel = $metricParts[3] ?? (self::METRICS[$metricKey]['label'] ?? 'downloads/total');
         $query        = $defaultQuery;
         $color        = self::sanitizeColor($color, $defaultColor);
 
         if ($label === '' || trim((string) $label) === '') {
-            $label = 'downloads/' . ($metricParts[0] ?? 'total');
+            $label = $defaultLabel;
         } else {
             $label = trim((string) $label);
         }
