@@ -7,7 +7,7 @@
 	<license>MIT License</license>
 	<authorEmail>n6rej@protonmail.com</authorEmail>
 	<authorUrl>https://github.com/N6REJ</authorUrl>
- <version>2026.10.21.29</version>
+ <version>2026.10.21.30</version>
 	<description>MOD_curseforge_GENERATOR_DESC</description>
 	<dependencies>
 		<php version="8.1" />
