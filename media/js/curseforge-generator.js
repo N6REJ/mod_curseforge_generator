@@ -43,6 +43,41 @@
 
   syncColorPicker("curseforge-color-picker", "curseforge-color");
 
+  // ---- Metric color auto-update ----
+  var metricSelect = el("curseforge-metric");
+  if (metricSelect) {
+    metricSelect.addEventListener("change", function () {
+      var val = metricSelect.value || "";
+      var parts = val.split("|");
+      if (parts.length >= 3 && /^[0-9A-Fa-f]{6}$/.test(parts[2])) {
+        var colorText = el("curseforge-color");
+        var colorPicker = el("curseforge-color-picker");
+        if (colorText) {
+          colorText.value = parts[2].toUpperCase();
+        }
+        if (colorPicker) {
+          colorPicker.value = "#" + parts[2].toUpperCase();
+        }
+      }
+      if (parts.length >= 1) {
+        var labelInput = el("curseforge-label");
+        if (labelInput && (!labelInput.dataset.userEdited || labelInput.dataset.userEdited === "false")) {
+          var metricName = parts[0];
+          labelInput.value = "downloads/" + metricName;
+        }
+      }
+      scheduleGenerate();
+    });
+  }
+
+  // Track if label was manually edited
+  var labelInputTrack = el("curseforge-label");
+  if (labelInputTrack) {
+    labelInputTrack.addEventListener("input", function () {
+      labelInputTrack.dataset.userEdited = "true";
+    });
+  }
+
   // ---- Tab switching ----
   var tabs = curseforge.querySelectorAll(".nav-tab-btn");
   var panels = {
@@ -150,6 +185,10 @@
     formData.append("label", value("curseforge-label", "downloads/total"));
     formData.append("color", value("curseforge-color", "0A7EA4"));
     formData.append("style", value("curseforge-style", "flat-square"));
+    formData.append("provider", "raw");
+    formData.append("labelcolor", "555555");
+    formData.append("logo", "");
+    formData.append("cache", "0");
     formData.append("charttype", value("curseforge-charttype", "total-trend"));
     formData.append("theme", value("curseforge-theme", "slate"));
     formData.append("chartdata", value("curseforge-chartdata", ""));
@@ -212,7 +251,8 @@
     var img = el("curseforge-badge-img");
 
     if (content && placeholder && img) {
-      img.src = badge.url;
+      var newUrl = badge.url + (badge.url.indexOf('?') >= 0 ? '&' : '?') + '_t=' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+      img.src = newUrl;
       showPreview(content, placeholder, true);
     }
   }

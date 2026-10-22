@@ -485,7 +485,7 @@ class ModCurseforgeGeneratorHelper
         $value = $data === null ? null : self::resolveQuery($data, $query);
 
         if ($value === null || $value === '') {
-            return self::buildBadgeSvg($label, 'unavailable', '9f9f9f', $labelColor, $style, $logo);
+            return self::buildBadgeSvg($label, 'unavailable', $color, $labelColor, $style, $logo);
         }
 
         if (is_numeric($value)) {
@@ -496,7 +496,7 @@ class ModCurseforgeGeneratorHelper
 
         if ($message === '') {
             $message = 'unavailable';
-            return self::buildBadgeSvg($label, $message, '9f9f9f', $labelColor, $style, $logo);
+            return self::buildBadgeSvg($label, $message, $color, $labelColor, $style, $logo);
         }
 
         return self::buildBadgeSvg($label, $message, $color, $labelColor, $style, $logo);
