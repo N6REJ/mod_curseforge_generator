@@ -179,7 +179,20 @@ use Joomla\CMS\Router\Route;
 
                     <div class="mb-3">
                         <label for="curseforge-chartdata" class="form-label"><?php echo Text::_('MOD_curseforge_GENERATOR_CHARTDATA'); ?></label>
-                        <textarea class="form-control font-monospace" id="curseforge-chartdata" rows="6" spellcheck="false" placeholder="2026-10-01 1200&#10;2026-10-02 1250"></textarea>
+                        <textarea class="form-control font-monospace" id="curseforge-chartdata" rows="6" spellcheck="false" placeholder="2026-10-01 1200&#10;2026-10-02 1250">2026-10-01 1180
+2026-10-02 1215
+2026-10-03 1262
+2026-10-04 1290
+2026-10-05 1344
+2026-10-06 1371
+2026-10-07 1420
+2026-10-08 1468
+2026-10-09 1502
+2026-10-10 1549
+2026-10-11 1601
+2026-10-12 1648
+2026-10-13 1690
+2026-10-14 1743</textarea>
                         <div class="form-text"><?php echo Text::_('MOD_curseforge_GENERATOR_CHARTDATA_DESC'); ?></div>
                     </div>
 

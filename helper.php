@@ -293,8 +293,13 @@ class ModCurseforgeGeneratorHelper
             $area .= ' L ' . $last[0] . ' ' . $bottom . ' Z';
 
             $svg .= '<path d="' . $area . '" fill="url(#fill)"/>'
-                . '<polyline points="' . implode(' ', $line) . '" fill="none" stroke="' . $stroke . '" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>'
-                . '<circle cx="' . $last[0] . '" cy="' . $last[1] . '" r="4.5" fill="' . $stroke . '"/>';
+                . '<polyline points="' . implode(' ', $line) . '" fill="none" stroke="' . $stroke . '" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>';
+
+            foreach ($points as $p) {
+                $svg .= '<circle cx="' . $p[0] . '" cy="' . $p[1] . '" r="3" fill="' . $palette['background'] . '" stroke="' . $stroke . '" stroke-width="2"/>';
+            }
+
+            $svg .= '<circle cx="' . $last[0] . '" cy="' . $last[1] . '" r="5" fill="' . $stroke . '"/>';
 
             $step  = max(1, (int) ceil(($count - 1) / 6));
             $ticks = [];
