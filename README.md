@@ -97,4 +97,4 @@ This module uses the [joomla-packager](https://github.com/N6REJ/joomla-packager)
 
 ## License
 
-MIT License. See [LICENSE](LICENSE) for details.
+GNU General Public License v3.0 only. See [LICENSE](LICENSE) for details.

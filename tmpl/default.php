@@ -3,8 +3,8 @@
 /**
  * @package     mod_curseforge_generator
  * @subpackage  mod_curseforge_generator
- * @license     MIT License
- * @link        https://github.com/N6REJ/curseforge-downloads-action
+ * @license     GPL-3.0-only
+ * @link        https://github.com/N6REJ/mod_curseforge_generator
  */
 
 defined('_JEXEC') or die;
