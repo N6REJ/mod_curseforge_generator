@@ -6,10 +6,10 @@
     <element>mod_curseforge_generator</element>
     <type>module</type>
     <client>site</client>
-    <version>2026.10.21.34</version>
+    <version>2026.10.22</version>
     <infourl title="CurseForge Badge &amp; Chart Generator">https://github.com/N6REJ/mod_curseforge_generator</infourl>
     <downloads>
-      <downloadurl type="full" format="zip">https://github.com/N6REJ/mod_curseforge_generator/releases/download/2026.10.21.34/mod_curseforge_generator_2026.10.21.34.zip</downloadurl>
+      <downloadurl type="full" format="zip">https://github.com/N6REJ/mod_curseforge_generator/releases/download/2026.10.22/mod_curseforge_generator_2026.10.22.zip</downloadurl>
     </downloads>
     <tags>
       <tag>curseforge</tag>
@@ -18,6 +18,6 @@
       <tag>generator</tag>
     </tags>
     <targetplatform name="joomla" version="(5|6).*" />
-    <sha256>ea6f2244480ea0a4f5a22e50fa2102ea6c7706617503deae42d7803e28a77958</sha256>
+    <sha256>3c9e42e68559420351e10b6ec5b7e90f1c90a75a7ecb07bc76d8838d2e7d0c33</sha256>
   </update>
 </updates>
