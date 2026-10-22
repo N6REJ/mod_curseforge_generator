@@ -371,7 +371,7 @@ class ModCurseforgeGeneratorHelper
 
         // Build badge
         $badgeUrl = self::buildBadgeUrl($owner, $repo, $branch, $jsonPath, $query, $label, $color, $style);
-        $badgeMd  = '!' . $label . '(' . $badgeUrl . ')';
+        $badgeMd  = '![' . $label . '](' . $badgeUrl . ')';
 
         // Build chart
         $chartUrl = self::buildChartUrl($owner, $repo, $chartType, $theme, $chartData, $color);

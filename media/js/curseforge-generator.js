@@ -354,6 +354,36 @@
     });
   }
 
+  // ---- Chart dataset presets ----
+  function buildSeries(days, start, step) {
+    var lines = [];
+    var date = new Date("2026-10-01T00:00:00Z");
+    var total = start;
+    for (var d = 0; d < days; d++) {
+      var day = new Date(date.getTime() + d * 86400000);
+      var iso = day.toISOString().slice(0, 10);
+      total += step + (d % 3) * 7;
+      lines.push(iso + " " + total);
+    }
+    return lines.join("\n");
+  }
+
+  datasets["sample-14"] = buildSeries(14, 1180, 40);
+  datasets["sample-30"] = buildSeries(30, 1000, 25);
+  datasets["slow-growth"] = buildSeries(30, 500, 4);
+
+  var datasetSelect = el("curseforge-dataset");
+  var chartDataBox = el("curseforge-chartdata");
+  if (datasetSelect && chartDataBox) {
+    datasetSelect.addEventListener("change", function () {
+      var key = datasetSelect.value;
+      if (datasets[key]) {
+        chartDataBox.value = datasets[key];
+      }
+      scheduleGenerate();
+    });
+  }
+
   // ---- Bind input/change events ----
   curseforge.addEventListener("input", scheduleGenerate);
   curseforge.addEventListener("change", scheduleGenerate);
