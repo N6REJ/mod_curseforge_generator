@@ -3,7 +3,10 @@
 /**
  * @package     mod_curseforge_generator
  * @subpackage  mod_curseforge_generator
- * @license     GPL-3.0-only
+ * @copyright   (C) 2026 N6REJ
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3 only.
+ * See LICENSE for the complete license text.
  * @link        https://github.com/N6REJ/mod_curseforge_generator
  */
 
