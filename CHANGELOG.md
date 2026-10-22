@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Add dataset preset selector with sample data generation and fix badge markdown syntax ([c0a719a](https://github.com/N6REJ/mod_curseforge_generator/commit/c0a719a))
 * Add comprehensive chart rendering with full GDA action compatibility and GitHub logo support ([bc825c2](https://github.com/N6REJ/mod_curseforge_generator/commit/bc825c2))
 * Add live demo link to README ([fb2ca40](https://github.com/N6REJ/mod_curseforge_generator/commit/fb2ca40))
+* Add full GPL-3.0 license text and update copyright headers across all files ([67d7c82](https://github.com/N6REJ/mod_curseforge_generator/commit/67d7c82))
 
 ### Changed
 
@@ -125,6 +126,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Change comment syntax from hash to semicolon in language file ([2f91cdd](https://github.com/N6REJ/mod_curseforge_generator/commit/2f91cdd))
 * Merge remote-tracking branch 'origin/main' ([4b4fc87](https://github.com/N6REJ/mod_curseforge_generator/commit/4b4fc87))
 * Update version to 2026.10.22.1 [skip ci] ([576dd08](https://github.com/N6REJ/mod_curseforge_generator/commit/576dd08))
+* Merge remote-tracking branch 'origin/main' ([d1517a6](https://github.com/N6REJ/mod_curseforge_generator/commit/d1517a6))
+* Update version to 2026.10.22 [skip ci] ([9ad86ea](https://github.com/N6REJ/mod_curseforge_generator/commit/9ad86ea))
+* Update default repository examples to mod_curseforge_generator and main branch ([2d91e4f](https://github.com/N6REJ/mod_curseforge_generator/commit/2d91e4f))
+* Merge remote-tracking branch 'origin/main' ([79f8232](https://github.com/N6REJ/mod_curseforge_generator/commit/79f8232))
 
 ### Fixed
 
