@@ -52,7 +52,7 @@
 					type="text"
 					label="MOD_curseforge_GENERATOR_REPO_LABEL"
 					description="MOD_curseforge_GENERATOR_REPO_DESC"
-					default="mod_bears_pricing_tables"
+					default="mod_curseforge_generator"
 					size="30"
 				/>
 				<field

@@ -53,8 +53,8 @@ This module lets visitors generate CurseForge badge and chart URLs directly on y
 | Field | Default | Description |
 |---|---|---|
 | Default Owner | `N6REJ` | GitHub owner (user or organization) that hosts the repository with CurseForge stats. |
-| Default Repository | `curseforge-downloads-action` | Name of the repository containing the stats data. |
-| Default Branch | `stats-data` | Git branch where the stats folder with badges and charts is stored. |
+| Default Repository | `mod_curseforge_generator` | Name of the repository containing the stats data. |
+| Default Branch | `main` | Git branch where the stats folder with badges and charts is stored. |
 
 Advanced: Module Class Suffix, Alternate Layout.
 
