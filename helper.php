@@ -323,7 +323,7 @@ class ModCurseforgeGeneratorHelper
             . '<title>' . $title . '</title>';
 
         if ($style === 'plastic' || $style === 'social') {
-            $svg .= '<linearGradient id="s" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient>';
+            $svg .= '<linearGradient id="s" x2="0" y2="100%"><stop offset="0" stop-color="#fff" stop-opacity=".7"/><stop offset=".1" stop-color="#fff" stop-opacity=".1"/><stop offset=".9" stop-color="#000" stop-opacity=".1"/><stop offset="1" stop-color="#000" stop-opacity=".2"/></linearGradient>';
         }
 
         $svg .= '<clipPath id="r"><rect width="' . $total . '" height="' . $height . '" rx="' . $radius . '" fill="#fff"/></clipPath>'
