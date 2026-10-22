@@ -114,6 +114,7 @@ class ModCurseforgeGeneratorHelper
             . '&query=' . urlencode($query)
             . '&label=' . urlencode($label)
             . '&color=' . $color
+            . '&labelColor=' . $color
             . '&style=' . $style
             . '&logo=curseforge'
             . '&cacheSeconds=900';
@@ -238,8 +239,8 @@ class ModCurseforgeGeneratorHelper
     {
         $palettes = [
             'black'  => ['background' => '#0b0b0d', 'grid' => '#1f2937', 'axis' => '#94a3b8', 'text' => '#f8fafc', 'sub' => '#cbd5e1'],
-            'slate'  => ['background' => '#0f172a', 'grid' => '#1e293b', 'axis' => '#94a3b8', 'text' => '#f8fafc', 'sub' => '#cbd5e1'],
-            'orange' => ['background' => '#1c0f05', 'grid' => '#3b2212', 'axis' => '#d6a57a', 'text' => '#fff7ed', 'sub' => '#fed7aa'],
+            'slate'  => ['background' => '#0f172a', 'grid' => '#1e293b', 'axis' => '#94a3b8', 'text' => '#e2e8f0', 'sub' => '#94a3b8'],
+            'orange' => ['background' => '#fff7ed', 'grid' => '#fed7aa', 'axis' => '#c2410c', 'text' => '#7c2d12', 'sub' => '#9a3412'],
         ];
         $palette = $palettes[$theme] ?? $palettes['slate'];
 
