@@ -25,7 +25,6 @@ if (!$wa->isAssetActive('style', 'bootstrap.css') && $wa->assetExists('preset', 
 // Load all module assets directly from this file
 $mediaUrl = Joomla\CMS\URI\URI::root() . 'media/mod_curseforge_generator/';
 
-$doc->addStyleSheet($mediaUrl . 'css/curseforge-generate.css');
 $doc->addScript($mediaUrl . 'js/curseforge-generator.js', [], ['defer' => true]);
 
 // 4. Generate URL endpoints and capture URL state params

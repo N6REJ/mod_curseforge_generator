@@ -213,8 +213,7 @@
 
     if (content && placeholder && img) {
       img.src = badge.url;
-      content.style.display = "block";
-      placeholder.style.display = "none";
+      showPreview(content, placeholder, true);
     }
   }
 
@@ -230,8 +229,17 @@
 
     if (content && placeholder && img) {
       img.src = chart.url;
-      content.style.display = "block";
-      placeholder.style.display = "none";
+      showPreview(content, placeholder, true);
+    }
+  }
+
+  function showPreview(content, placeholder, show) {
+    if (show) {
+      content.classList.remove("d-none");
+      placeholder.classList.add("d-none");
+    } else {
+      content.classList.add("d-none");
+      placeholder.classList.remove("d-none");
     }
   }
 
@@ -315,14 +323,12 @@
     badgeImg.addEventListener("load", function () {
       var content = el("curseforge-badge-content");
       var placeholder = el("curseforge-badge-placeholder");
-      if (content) content.style.display = "block";
-      if (placeholder) placeholder.style.display = "none";
+      if (content && placeholder) showPreview(content, placeholder, true);
     });
     badgeImg.addEventListener("error", function () {
       var content = el("curseforge-badge-content");
       var placeholder = el("curseforge-badge-placeholder");
-      if (content) content.style.display = "none";
-      if (placeholder) placeholder.style.display = "flex";
+      if (content && placeholder) showPreview(content, placeholder, false);
     });
   }
 
@@ -331,14 +337,12 @@
     chartImg.addEventListener("load", function () {
       var content = el("curseforge-chart-content");
       var placeholder = el("curseforge-chart-placeholder");
-      if (content) content.style.display = "block";
-      if (placeholder) placeholder.style.display = "none";
+      if (content && placeholder) showPreview(content, placeholder, true);
     });
     chartImg.addEventListener("error", function () {
       var content = el("curseforge-chart-content");
       var placeholder = el("curseforge-chart-placeholder");
-      if (content) content.style.display = "none";
-      if (placeholder) placeholder.style.display = "flex";
+      if (content && placeholder) showPreview(content, placeholder, false);
     });
   }
 

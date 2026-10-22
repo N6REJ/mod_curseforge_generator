@@ -25,7 +25,7 @@ use Joomla\CMS\Router\Route;
 
         <!-- Generator Lab Header -->
         <div class="mb-3">
-            <h2 class="h4 fw-bold text-dark"><?php echo Text::_('MOD_curseforge_GENERATOR_LAB_TITLE'); ?></h2>
+            <h2 class="h4 fw-bold text-body"><?php echo Text::_('MOD_curseforge_GENERATOR_LAB_TITLE'); ?></h2>
             <p class="text-body-secondary small"><?php echo Text::_('MOD_curseforge_GENERATOR_LAB_DESC'); ?></p>
         </div>
 
@@ -94,7 +94,7 @@ use Joomla\CMS\Router\Route;
                         <div class="col-md-4">
                             <label for="curseforge-color" class="form-label"><?php echo Text::_('MOD_curseforge_GENERATOR_COLOR'); ?></label>
                             <div class="input-group">
-                                <input type="color" class="form-control form-control-color" id="curseforge-color-picker" value="#0A7EA4" title="Choose color" />
+                                <input type="color" class="form-control form-control-color w-auto p-1" id="curseforge-color-picker" value="#0A7EA4" title="Choose color" />
                                 <input type="text" class="form-control" id="curseforge-color" value="0A7EA4" spellcheck="false" maxlength="6" />
                             </div>
                         </div>
@@ -129,12 +129,12 @@ use Joomla\CMS\Router\Route;
                     <!-- Badge Output -->
                     <div class="mb-3">
                         <small class="fw-semibold text-body-secondary"><?php echo Text::_('MOD_curseforge_GENERATOR_BADGE_URL_LABEL'); ?></small>
-                        <div class="bg-light border rounded p-2 mb-2 overflow-auto">
-                            <code id="curseforge-badge-url" class="small text-dark"></code>
+                        <div class="bg-body-tertiary border rounded p-2 mb-2 overflow-auto">
+                            <code id="curseforge-badge-url" class="small text-body text-break"></code>
                         </div>
                         <small class="fw-semibold text-body-secondary"><?php echo Text::_('MOD_curseforge_GENERATOR_MARKDOWN_LABEL'); ?></small>
-                        <div class="bg-light border rounded p-2 mb-2 overflow-auto">
-                            <code id="curseforge-badge-md" class="small text-dark"></code>
+                        <div class="bg-body-tertiary border rounded p-2 mb-2 overflow-auto">
+                            <code id="curseforge-badge-md" class="small text-body text-break"></code>
                         </div>
                         <div class="d-flex flex-wrap gap-2">
                             <button type="button" class="btn btn-primary btn-sm" data-copy="curseforge-badge-md">
@@ -202,12 +202,12 @@ use Joomla\CMS\Router\Route;
                     <!-- Chart Output -->
                     <div class="mb-3">
                         <small class="fw-semibold text-body-secondary"><?php echo Text::_('MOD_curseforge_GENERATOR_CHART_URL_LABEL'); ?></small>
-                        <div class="bg-light border rounded p-2 mb-2 overflow-auto">
-                            <code id="curseforge-chart-url" class="small text-dark"></code>
+                        <div class="bg-body-tertiary border rounded p-2 mb-2 overflow-auto">
+                            <code id="curseforge-chart-url" class="small text-body text-break"></code>
                         </div>
                         <small class="fw-semibold text-body-secondary"><?php echo Text::_('MOD_curseforge_GENERATOR_MARKDOWN_LABEL'); ?></small>
-                        <div class="bg-light border rounded p-2 mb-2 overflow-auto">
-                            <code id="curseforge-chart-md" class="small text-dark"></code>
+                        <div class="bg-body-tertiary border rounded p-2 mb-2 overflow-auto">
+                            <code id="curseforge-chart-md" class="small text-body text-break"></code>
                         </div>
                         <div class="d-flex flex-wrap gap-2">
                             <button type="button" class="btn btn-primary btn-sm" data-copy="curseforge-chart-md">

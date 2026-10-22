@@ -82,8 +82,6 @@ mod_curseforge_generator/
 ├── tmpl/
 │   └── default.php           # GDA-style Generator Lab template
 ├── media/
-│   ├── css/
-│   │   └── curseforge-generate.css         # GDA-inspired styles (tabs, pickers, toggles)
 │   └── js/
 │       └── curseforge-generator.js # AJAX-based generator script
 ├── language/
