@@ -136,15 +136,20 @@ class ModCurseforgeGeneratorHelper
     /**
      * Build the module endpoint URL that renders the chart SVG.
      *
+     * @param   string  $owner      GitHub owner
+     * @param   string  $repo       Repository name
      * @param   string  $chartType  Chart type
      * @param   string  $theme      Chart theme
      * @param   string  $chartData  Date and count lines
+     * @param   string  $color      Hex color (no #)
      *
      * @return  string
      */
-    public static function buildChartUrl($chartType, $theme, $chartData, $color)
+    public static function buildChartUrl($owner, $repo, $chartType, $theme, $chartData, $color)
     {
         return Uri::root() . 'index.php?option=com_ajax&module=curseforge_generator&method=chart&format=raw'
+            . '&owner=' . urlencode($owner)
+            . '&repo=' . urlencode($repo)
             . '&charttype=' . urlencode($chartType)
             . '&theme=' . urlencode($theme)
             . '&color=' . urlencode($color)
@@ -221,53 +226,98 @@ class ModCurseforgeGeneratorHelper
     /**
      * Build an SVG line chart from labels and values.
      *
-     * @param   array   $labels     Labels in order
-     * @param   array   $values     Numeric values
-     * @param   string  $chartType  Chart type, used in the title
-     * @param   string  $theme      black, slate or orange
+     * @param   array   $labels  Labels in order
+     * @param   array   $values  Numeric values
+     * @param   string  $theme   black, slate or orange
+     * @param   string  $color   Hex color (no #) for the line and latest value
+     * @param   string  $title   Chart title
      *
      * @return  string
      */
-    public static function buildChartSvg(array $labels, array $values, $chartType, $theme, $color)
+    public static function buildChartSvg(array $labels, array $values, $theme, $color, $title)
     {
         $palettes = [
-            'black'  => ['background' => '#111111', 'text' => '#cccccc'],
-            'slate'  => ['background' => '#334155', 'text' => '#e2e8f0'],
-            'orange' => ['background' => '#7c2d12', 'text' => '#ffedd5'],
+            'black'  => ['background' => '#0b0b0d', 'grid' => '#1f2937', 'axis' => '#94a3b8', 'text' => '#f8fafc', 'sub' => '#cbd5e1'],
+            'slate'  => ['background' => '#0f172a', 'grid' => '#1e293b', 'axis' => '#94a3b8', 'text' => '#f8fafc', 'sub' => '#cbd5e1'],
+            'orange' => ['background' => '#1c0f05', 'grid' => '#3b2212', 'axis' => '#d6a57a', 'text' => '#fff7ed', 'sub' => '#fed7aa'],
         ];
         $palette = $palettes[$theme] ?? $palettes['slate'];
 
-        $width  = 600;
-        $height = 300;
-        $pad    = 40;
-        $innerW = $width - 2 * $pad;
-        $innerH = $height - 2 * $pad;
+        $width  = 1000;
+        $height = 360;
+        $left   = 64;
+        $right  = 976;
+        $top    = 52;
+        $bottom = 304;
+        $innerW = $right - $left;
+        $innerH = $bottom - $top;
         $count  = count($values);
         $maxV   = $count ? max(max($values), 1) : 1;
+        $stroke = '#' . $color;
+        $title  = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
 
-        $coords = [];
+        $svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' . $width . '" height="' . $height . '" viewBox="0 0 ' . $width . ' ' . $height . '" role="img" aria-label="' . $title . '">'
+            . '<defs><linearGradient id="fill" x1="0" y1="0" x2="0" y2="1">'
+            . '<stop offset="0%" stop-color="' . $stroke . '" stop-opacity="0.32"/>'
+            . '<stop offset="100%" stop-color="' . $stroke . '" stop-opacity="0.05"/>'
+            . '</linearGradient></defs>'
+            . '<rect width="' . $width . '" height="' . $height . '" rx="16" fill="' . $palette['background'] . '"/>'
+            . '<text x="' . $left . '" y="34" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="' . $palette['text'] . '">' . $title . '</text>';
 
-        foreach ($values as $i => $value) {
-            $x = $count > 1 ? $pad + $i * $innerW / ($count - 1) : $pad + $innerW / 2;
-            $y = $pad + $innerH - ($value / $maxV) * $innerH;
-            $coords[] = round($x, 1) . ',' . round($y, 1);
+        for ($j = 0; $j <= 6; $j++) {
+            $y     = $top + $j * $innerH / 6;
+            $value = (int) round($maxV * (6 - $j) / 6);
+            $svg  .= '<line x1="' . $left . '" y1="' . $y . '" x2="' . $right . '" y2="' . $y . '" stroke="' . $palette['grid'] . '" stroke-width="1"/>'
+                . '<text x="56" y="' . ($y + 4) . '" text-anchor="end" font-family="Arial, sans-serif" font-size="12" fill="' . $palette['axis'] . '">' . $value . '</text>';
         }
-
-        $title = htmlspecialchars('Downloads ' . $chartType, ENT_QUOTES, 'UTF-8');
-        $text  = 'fill="' . $palette['text'] . '" font-family="sans-serif"';
-
-        $svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' . $width . '" height="' . $height . '" viewBox="0 0 ' . $width . ' ' . $height . '">'
-            . '<rect width="100%" height="100%" fill="' . $palette['background'] . '"/>'
-            . '<text x="' . $pad . '" y="25" ' . $text . ' font-size="14">' . $title . '</text>';
 
         if ($count) {
-            $svg .= '<polyline fill="none" stroke="#' . $color . '" stroke-width="2" points="' . implode(' ', $coords) . '"/>';
-            $svg .= '<text x="' . $pad . '" y="' . ($height - 10) . '" ' . $text . ' font-size="11">' . htmlspecialchars((string) $labels[0], ENT_QUOTES, 'UTF-8') . '</text>';
-            $svg .= '<text x="' . ($width - $pad) . '" y="' . ($height - 10) . '" text-anchor="end" ' . $text . ' font-size="11">' . htmlspecialchars((string) $labels[$count - 1], ENT_QUOTES, 'UTF-8') . '</text>';
-            $svg .= '<text x="' . ($width - $pad) . '" y="25" text-anchor="end" fill="#' . $color . '" font-family="sans-serif" font-size="14">' . (int) $values[$count - 1] . '</text>';
+            $points = [];
+
+            foreach ($values as $i => $value) {
+                $x = $count > 1 ? $left + $i * $innerW / ($count - 1) : $left + $innerW / 2;
+                $y = $bottom - ($value / $maxV) * $innerH;
+                $points[] = [round($x, 2), round($y, 2)];
+            }
+
+            $first = $points[0];
+            $last  = $points[$count - 1];
+            $area  = 'M ' . $first[0] . ' ' . $bottom;
+            $line  = [];
+
+            foreach ($points as $p) {
+                $area .= ' L ' . $p[0] . ' ' . $p[1];
+                $line[] = $p[0] . ',' . $p[1];
+            }
+
+            $area .= ' L ' . $last[0] . ' ' . $bottom . ' Z';
+
+            $svg .= '<path d="' . $area . '" fill="url(#fill)"/>'
+                . '<polyline points="' . implode(' ', $line) . '" fill="none" stroke="' . $stroke . '" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>'
+                . '<circle cx="' . $last[0] . '" cy="' . $last[1] . '" r="4.5" fill="' . $stroke . '"/>';
+
+            $step  = max(1, (int) ceil(($count - 1) / 6));
+            $ticks = [];
+
+            for ($i = 0; $i < $count; $i += $step) {
+                $ticks[] = $i;
+            }
+
+            if (end($ticks) !== $count - 1) {
+                $ticks[] = $count - 1;
+            }
+
+            foreach ($ticks as $i) {
+                $anchor = $i === 0 ? 'start' : ($i === $count - 1 ? 'end' : 'middle');
+                $svg   .= '<text x="' . $points[$i][0] . '" y="336" text-anchor="' . $anchor . '" font-family="Arial, sans-serif" font-size="12" fill="' . $palette['axis'] . '">' . htmlspecialchars((string) $labels[$i], ENT_QUOTES, 'UTF-8') . '</text>';
+            }
+
+            $svg .= '<text x="' . $right . '" y="34" text-anchor="end" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="' . $palette['text'] . '">Latest total: ' . (int) $values[$count - 1] . '</text>';
         } else {
-            $svg .= '<text x="' . ($width / 2) . '" y="' . ($height / 2) . '" text-anchor="middle" ' . $text . ' font-size="14">No data</text>';
+            $svg .= '<text x="' . ($width / 2) . '" y="' . ($height / 2) . '" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="' . $palette['sub'] . '">No data</text>';
         }
+
+        $svg .= '<text x="' . $left . '" y="352" font-family="Arial, sans-serif" font-size="13" fill="' . $palette['sub'] . '">Generated ' . date('Y-m-d') . '</text>';
 
         return $svg . '</svg>';
     }
@@ -318,7 +368,7 @@ class ModCurseforgeGeneratorHelper
         $badgeMd  = '!' . $label . '(' . $badgeUrl . ')';
 
         // Build chart
-        $chartUrl = self::buildChartUrl($chartType, $theme, $chartData, $color);
+        $chartUrl = self::buildChartUrl($owner, $repo, $chartType, $theme, $chartData, $color);
         $chartMd  = '![Downloads ' . $chartType . ' ' . $theme . '](' . $chartUrl . ')';
 
         $response = [
@@ -353,11 +403,13 @@ class ModCurseforgeGeneratorHelper
         $theme     = self::sanitizeChoice($input->getCmd('theme', 'slate'), ['black', 'slate', 'orange'], 'slate');
         $chartData = $input->getString('chartdata', '');
         $color     = self::sanitizeColor($input->getString('color', ''), '0A7EA4');
+        $owner     = self::sanitizeSlug($input->getString('owner', ''), 'OWNER');
+        $repo      = self::sanitizeSlug($input->getString('repo', ''), 'REPOSITORY');
 
         [$labels, $values] = self::aggregateChartData(self::parseChartData($chartData), $chartType);
 
         $app->setHeader('Content-Type', 'image/svg+xml; charset=utf-8', true);
 
-        return self::buildChartSvg($labels, $values, $chartType, $theme, $color);
+        return self::buildChartSvg($labels, $values, $theme, $color, $owner . '/' . $repo . ' release downloads');
     }
 }
