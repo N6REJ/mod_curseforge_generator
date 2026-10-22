@@ -178,13 +178,6 @@ use Joomla\CMS\Router\Route;
                     </div>
 
                     <div class="mb-3">
-                        <label for="curseforge-dataset" class="form-label"><?php echo Text::_('MOD_curseforge_GENERATOR_DATASET'); ?></label>
-                        <select class="form-select mb-2" id="curseforge-dataset">
-                            <option value="sample-14" selected><?php echo Text::_('MOD_curseforge_GENERATOR_DATASET_SAMPLE_14'); ?></option>
-                            <option value="sample-30"><?php echo Text::_('MOD_curseforge_GENERATOR_DATASET_SAMPLE_30'); ?></option>
-                            <option value="slow-growth"><?php echo Text::_('MOD_curseforge_GENERATOR_DATASET_SLOW'); ?></option>
-                            <option value="custom"><?php echo Text::_('MOD_curseforge_GENERATOR_DATASET_CUSTOM'); ?></option>
-                        </select>
                         <label for="curseforge-chartdata" class="form-label"><?php echo Text::_('MOD_curseforge_GENERATOR_CHARTDATA'); ?></label>
                         <textarea class="form-control font-monospace" id="curseforge-chartdata" rows="6" spellcheck="false" placeholder="2026-10-01 1200&#10;2026-10-02 1250">2026-10-01 1180
 2026-10-02 1215
