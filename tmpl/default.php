@@ -24,7 +24,7 @@ $cfFirstMetric = reset($cfMetrics);
     <div class="container-fluid py-3" id="curseforge-root">
         <p class="text-muted small mb-3">
             <?php echo Text::_('MOD_curseforge_GENERATOR_INTRO'); ?>
-            <a href="https://github.com/N6REJ/curseforge-downloads-action" target="_blank" rel="noopener">curseforge-downloads-action</a>.
+            <a href="https://github.com/N6REJ/mod_curseforge_generator" target="_blank" rel="noopener">mod_curseforge_generator</a>.
         </p>
 
         <!-- Generator Lab Header -->

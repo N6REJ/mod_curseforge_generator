@@ -578,7 +578,7 @@ class ModCurseforgeGeneratorHelper
 
         $owner    = self::sanitizeSlug($input->getString('owner', ''), '');
         $repo     = self::sanitizeSlug($input->getString('repo', ''), '');
-        $branch   = self::sanitizeSlug($input->getString('branch', ''), 'stats-data');
+        $branch   = self::sanitizeSlug($input->getString('branch', ''), 'main');
         $jsonPath = self::sanitizePath($input->getString('jsonpath', ''), 'stats/downloads.json');
         $provider = self::sanitizeChoice($input->getString('provider', 'raw'), self::PROVIDERS, 'raw');
         $query    = $input->getString('query', '$.stats.total');
@@ -1159,7 +1159,7 @@ class ModCurseforgeGeneratorHelper
         return [
             'owner'           => $string('owner', 'owner'),
             'repo'            => $string('repo', 'repo'),
-            'branch'          => self::sanitizeSlug($string('branch', 'stats-data'), 'stats-data'),
+            'branch'          => self::sanitizeSlug($string('branch', 'main'), 'main'),
             'jsonpath'        => self::sanitizePath($string('jsonpath', 'stats/downloads.json'), 'stats/downloads.json'),
             'provider'        => self::sanitizeChoice($string('provider', 'raw'), self::PROVIDERS, 'raw'),
             'charttype'       => self::sanitizeChoice($string('charttype', 'total-trend'), self::CHART_TYPES, 'total-trend'),
@@ -1222,7 +1222,7 @@ class ModCurseforgeGeneratorHelper
         // Sanitize
         $owner    = self::sanitizeSlug($owner, 'OWNER');
         $repo     = self::sanitizeSlug($repo, 'REPOSITORY');
-        $branch   = self::sanitizeSlug($branch, 'stats-data');
+        $branch   = self::sanitizeSlug($branch, 'main');
         $jsonPath = self::sanitizePath($jsonPath, 'stats/downloads.json');
         $provider = self::sanitizeChoice($provider, self::PROVIDERS, 'raw');
         $style    = self::sanitizeChoice($style, self::BADGE_STYLES, 'flat-square');

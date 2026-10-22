@@ -6,7 +6,7 @@ A Joomla 5/6 site module that provides an interactive **Generator Lab** for Curs
 
 ## Purpose
 
-This module lets visitors generate CurseForge badge and chart URLs directly on your Joomla site. It connects to the [curseforge-downloads-action](https://github.com/N6REJ/curseforge-downloads-action) GitHub Action's output and produces embeddable badges (via Shields.io) and chart images (via raw.githubusercontent.com). The UI mirrors the GDA Generator Lab with Basic/Advanced tabs, live previews, and color pickers.
+This module lets visitors generate CurseForge badge and chart URLs directly on your Joomla site. It connects to the [mod_curseforge_generator](https://github.com/N6REJ/mod_curseforge_generator) GitHub Action's output and produces embeddable badges (via Shields.io) and chart images (via raw.githubusercontent.com). The UI mirrors the GDA Generator Lab with Basic/Advanced tabs, live previews, and color pickers.
 
 ## Features
 
