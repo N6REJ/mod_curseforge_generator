@@ -2,6 +2,8 @@
 
 A Joomla 5/6 site module that provides an interactive **Generator Lab** for CurseForge Downloads Action badges and charts. Designed to match the look, feel, and behavior of the [GitHub Downloads Action Generator Lab](https://www.justagwas.com/projects/gda/). Uses AJAX for server-side badge and chart generation with live color pickers.
 
+**[Try the live demo](https://hallhome.us/curseforge/dashboard-generator)**
+
 ## Purpose
 
 This module lets visitors generate CurseForge badge and chart URLs directly on your Joomla site. It connects to the [curseforge-downloads-action](https://github.com/N6REJ/curseforge-downloads-action) GitHub Action's output and produces embeddable badges (via Shields.io) and chart images (via raw.githubusercontent.com). The UI mirrors the GDA Generator Lab with Basic/Advanced tabs, live previews, and color pickers.
