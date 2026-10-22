@@ -11,10 +11,11 @@ require_once __DIR__ . '/helper.php';
 $input = Factory::getApplication()->input;
 
 // 2. Fetch module configuration fallback variables
-$defaultOwner  = $params->get('default_owner', 'N6REJ');
-$defaultRepo   = $params->get('default_repo', 'curseforge-downloads-action');
-$defaultBranch = $params->get('default_branch', 'stats-data');
-$defaultStyle  = $params->get('default_style', 'flat-square');
+$defaultOwner    = $params->get('default_owner', 'N6REJ');
+$defaultRepo     = $params->get('default_repo', 'mod_bears_pricing_tables');
+$defaultBranch   = $params->get('default_branch', 'main');
+$defaultJsonPath = $params->get('default_jsonpath', 'stats/downloads.json');
+$defaultStyle    = $params->get('default_style', 'flat-square');
 
 // 3. Load Bootstrap 5 only if the site template has not already loaded it
 $doc = Factory::getApplication()->getDocument();
@@ -45,6 +46,7 @@ $doc->addScriptOptions('mod_curseforge_generator', [
     'defaultOwner'  => $defaultOwner,
     'defaultRepo'   => $defaultRepo,
     'defaultBranch' => $defaultBranch,
+    'defaultJsonPath' => $defaultJsonPath,
     'defaultStyle'  => $defaultStyle,
     'ajaxUrl'       => $ajaxUrl,
     'urlMetric'     => $urlMetric,

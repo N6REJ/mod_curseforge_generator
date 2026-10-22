@@ -9,9 +9,7 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Router\Route;
 
 // Metric map (single source of truth) and the first metric used as default
 $cfMetrics     = ModCurseforgeGeneratorHelper::METRICS;
@@ -54,17 +52,24 @@ $cfFirstMetric = reset($cfMetrics);
                     <p class="text-muted small mb-3"><?php echo Text::_('MOD_curseforge_GENERATOR_REPO_DETAILS_DESC'); ?></p>
 
                     <div class="row g-3">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label for="curseforge-owner" class="form-label"><?php echo Text::_('MOD_curseforge_GENERATOR_OWNER'); ?></label>
                             <input type="text" class="form-control" id="curseforge-owner" value="<?php echo htmlspecialchars($defaultOwner); ?>" spellcheck="false" />
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label for="curseforge-repo" class="form-label"><?php echo Text::_('MOD_curseforge_GENERATOR_REPO'); ?></label>
                             <input type="text" class="form-control" id="curseforge-repo" value="<?php echo htmlspecialchars($defaultRepo); ?>" spellcheck="false" />
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label for="curseforge-branch" class="form-label"><?php echo Text::_('MOD_curseforge_GENERATOR_BRANCH'); ?></label>
                             <input type="text" class="form-control" id="curseforge-branch" value="<?php echo htmlspecialchars($defaultBranch); ?>" spellcheck="false" />
+                        </div>
+                        <div class="col-md-3">
+                            <label for="curseforge-provider" class="form-label"><?php echo Text::_('MOD_curseforge_GENERATOR_PROVIDER'); ?></label>
+                            <select class="form-select" id="curseforge-provider">
+                                <option value="raw" selected><?php echo Text::_('MOD_curseforge_GENERATOR_PROVIDER_RAW'); ?></option>
+                                <option value="jsdelivr"><?php echo Text::_('MOD_curseforge_GENERATOR_PROVIDER_JSDELIVR'); ?></option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -92,11 +97,14 @@ $cfFirstMetric = reset($cfMetrics);
                             <input type="text" class="form-control" id="curseforge-label" value="<?php echo htmlspecialchars($cfFirstMetric['label'], ENT_QUOTES, 'UTF-8'); ?>" data-user-edited="false" spellcheck="false" />
                         </div>
                         <div class="col-md-4">
-                            <label for="curseforge-label-color" class="form-label"><?php echo Text::_('MOD_curseforge_GENERATOR_LABEL_COLOR'); ?></label>
-                            <div class="input-group">
-                                <input type="color" class="form-control form-control-color" id="curseforge-label-color-picker" value="#<?php echo ModCurseforgeGeneratorHelper::DEFAULT_LABEL_COLOR; ?>" title="Choose label color" />
-                                <input type="text" class="form-control" id="curseforge-label-color" value="<?php echo ModCurseforgeGeneratorHelper::DEFAULT_LABEL_COLOR; ?>" spellcheck="false" maxlength="6" />
-                            </div>
+                            <label for="curseforge-style" class="form-label"><?php echo Text::_('MOD_curseforge_GENERATOR_STYLE'); ?></label>
+                            <select class="form-select" id="curseforge-style">
+                                <option value="flat"><?php echo Text::_('MOD_curseforge_GENERATOR_STYLE_FLAT'); ?></option>
+                                <option value="flat-square" selected><?php echo Text::_('MOD_curseforge_GENERATOR_STYLE_FLAT_SQUARE'); ?></option>
+                                <option value="plastic"><?php echo Text::_('MOD_curseforge_GENERATOR_STYLE_PLASTIC'); ?></option>
+                                <option value="for-the-badge"><?php echo Text::_('MOD_curseforge_GENERATOR_STYLE_FOR_THE_BADGE'); ?></option>
+                                <option value="social"><?php echo Text::_('MOD_curseforge_GENERATOR_STYLE_SOCIAL'); ?></option>
+                            </select>
                         </div>
                     </div>
                     <div class="row g-3 mb-3">
@@ -108,14 +116,26 @@ $cfFirstMetric = reset($cfMetrics);
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <label for="curseforge-style" class="form-label"><?php echo Text::_('MOD_curseforge_GENERATOR_STYLE'); ?></label>
-                            <select class="form-select" id="curseforge-style">
-                                <option value="flat"><?php echo Text::_('MOD_curseforge_GENERATOR_STYLE_FLAT'); ?></option>
-                                <option value="flat-square" selected><?php echo Text::_('MOD_curseforge_GENERATOR_STYLE_FLAT_SQUARE'); ?></option>
-                                <option value="plastic"><?php echo Text::_('MOD_curseforge_GENERATOR_STYLE_PLASTIC'); ?></option>
-                                <option value="for-the-badge"><?php echo Text::_('MOD_curseforge_GENERATOR_STYLE_FOR_THE_BADGE'); ?></option>
-                                <option value="social"><?php echo Text::_('MOD_curseforge_GENERATOR_STYLE_SOCIAL'); ?></option>
+                            <label for="curseforge-label-color" class="form-label"><?php echo Text::_('MOD_curseforge_GENERATOR_LABEL_COLOR'); ?></label>
+                            <div class="input-group">
+                                <input type="color" class="form-control form-control-color" id="curseforge-label-color-picker" value="#<?php echo ModCurseforgeGeneratorHelper::DEFAULT_LABEL_COLOR; ?>" title="Choose label color" />
+                                <input type="text" class="form-control" id="curseforge-label-color" value="<?php echo ModCurseforgeGeneratorHelper::DEFAULT_LABEL_COLOR; ?>" spellcheck="false" maxlength="6" />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="curseforge-logo" class="form-label"><?php echo Text::_('MOD_curseforge_GENERATOR_LOGO'); ?></label>
+                            <select class="form-select" id="curseforge-logo">
+                                <option value=""><?php echo Text::_('MOD_curseforge_GENERATOR_LOGO_NONE'); ?></option>
+                                <option value="curseforge"><?php echo Text::_('MOD_curseforge_GENERATOR_LOGO_CURSEFORGE'); ?></option>
+                                <option value="github" selected><?php echo Text::_('MOD_curseforge_GENERATOR_LOGO_GITHUB'); ?></option>
                             </select>
+                        </div>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-4">
+                            <label for="curseforge-cache" class="form-label"><?php echo Text::_('MOD_curseforge_GENERATOR_CACHE'); ?></label>
+                            <input type="number" class="form-control" id="curseforge-cache" min="0" max="86400" step="1" value="<?php echo (int) ModCurseforgeGeneratorHelper::DEFAULT_CACHE_SECONDS; ?>" />
+                            <div class="form-text"><?php echo Text::_('MOD_curseforge_GENERATOR_CACHE_DESC'); ?></div>
                         </div>
                     </div>
 
@@ -143,12 +163,26 @@ $cfFirstMetric = reset($cfMetrics);
                         <div class="bg-body-tertiary border rounded p-2 mb-2 overflow-auto">
                             <code id="curseforge-badge-md" class="small text-body text-break"></code>
                         </div>
+                        <small class="fw-semibold text-body-secondary"><?php echo Text::_('MOD_curseforge_GENERATOR_SHIELDS_URL_LABEL'); ?></small>
+                        <div class="bg-body-tertiary border rounded p-2 mb-2 overflow-auto">
+                            <code id="curseforge-badge-shields-url" class="small text-body text-break"></code>
+                        </div>
+                        <small class="fw-semibold text-body-secondary"><?php echo Text::_('MOD_curseforge_GENERATOR_SHIELDS_MD_LABEL'); ?></small>
+                        <div class="bg-body-tertiary border rounded p-2 mb-2 overflow-auto">
+                            <code id="curseforge-badge-shields-md" class="small text-body text-break"></code>
+                        </div>
                         <div class="d-flex flex-wrap gap-2">
                             <button type="button" class="btn btn-primary btn-sm" data-copy="curseforge-badge-md">
                                 <?php echo Text::_('MOD_curseforge_GENERATOR_COPY_BADGE_MD'); ?>
                             </button>
                             <button type="button" class="btn btn-outline-secondary btn-sm" data-copy="curseforge-badge-url">
                                 <?php echo Text::_('MOD_curseforge_GENERATOR_COPY_BADGE_URL'); ?>
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" data-copy="curseforge-badge-shields-md">
+                                <?php echo Text::_('MOD_curseforge_GENERATOR_COPY_SHIELDS_MD'); ?>
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" data-copy="curseforge-badge-shields-url">
+                                <?php echo Text::_('MOD_curseforge_GENERATOR_COPY_SHIELDS_URL'); ?>
                             </button>
                         </div>
                     </div>
@@ -184,22 +218,85 @@ $cfFirstMetric = reset($cfMetrics);
                         </div>
                     </div>
 
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label for="curseforge-chart-width" class="form-label"><?php echo Text::_('MOD_curseforge_GENERATOR_WIDTH'); ?></label>
+                            <input type="number" class="form-control" id="curseforge-chart-width" min="640" max="4096" step="10" value="1000" />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="curseforge-chart-height" class="form-label"><?php echo Text::_('MOD_curseforge_GENERATOR_HEIGHT'); ?></label>
+                            <input type="number" class="form-control" id="curseforge-chart-height" min="240" max="2160" step="10" value="360" />
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label for="curseforge-chart-yticks" class="form-label"><?php echo Text::_('MOD_curseforge_GENERATOR_YTICKS'); ?></label>
+                            <input type="number" class="form-control" id="curseforge-chart-yticks" min="2" max="12" step="1" value="6" />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="curseforge-chart-xlabels" class="form-label"><?php echo Text::_('MOD_curseforge_GENERATOR_XLABELDAYS'); ?></label>
+                            <input type="number" class="form-control" id="curseforge-chart-xlabels" min="0" max="365" step="1" value="0" />
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label for="curseforge-chart-dateformat" class="form-label"><?php echo Text::_('MOD_curseforge_GENERATOR_DATELABELFORMAT'); ?></label>
+                            <select class="form-select" id="curseforge-chart-dateformat">
+                                <option value="yyyy-mm-dd" selected><?php echo Text::_('MOD_curseforge_GENERATOR_DATEFORMAT_YYYY_MM_DD'); ?></option>
+                                <option value="yy/mm/dd"><?php echo Text::_('MOD_curseforge_GENERATOR_DATEFORMAT_YY_MM_DD'); ?></option>
+                                <option value="dd/mm"><?php echo Text::_('MOD_curseforge_GENERATOR_DATEFORMAT_DD_MM'); ?></option>
+                                <option value="mm/dd"><?php echo Text::_('MOD_curseforge_GENERATOR_DATEFORMAT_MM_DD'); ?></option>
+                                <option value="none"><?php echo Text::_('MOD_curseforge_GENERATOR_DATEFORMAT_NONE'); ?></option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="curseforge-chart-titlemode" class="form-label"><?php echo Text::_('MOD_curseforge_GENERATOR_TITLEMODE'); ?></label>
+                            <select class="form-select" id="curseforge-chart-titlemode">
+                                <option value="default" selected><?php echo Text::_('MOD_curseforge_GENERATOR_TITLEMODE_DEFAULT'); ?></option>
+                                <option value="custom"><?php echo Text::_('MOD_curseforge_GENERATOR_TITLEMODE_CUSTOM'); ?></option>
+                                <option value="none"><?php echo Text::_('MOD_curseforge_GENERATOR_TITLEMODE_NONE'); ?></option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6 d-none" id="curseforge-chart-titletext-wrap">
+                            <label for="curseforge-chart-titletext" class="form-label"><?php echo Text::_('MOD_curseforge_GENERATOR_CUSTOMTITLE'); ?></label>
+                            <input type="text" class="form-control" id="curseforge-chart-titletext" spellcheck="false" />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="curseforge-chart-alt" class="form-label"><?php echo Text::_('MOD_curseforge_GENERATOR_ALTTEXT'); ?></label>
+                            <input type="text" class="form-control" id="curseforge-chart-alt" spellcheck="false" />
+                            <div class="form-text"><?php echo Text::_('MOD_curseforge_GENERATOR_ALTTEXT_DESC'); ?></div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="curseforge-chart-zerobaseline" checked />
+                                <label class="form-check-label" for="curseforge-chart-zerobaseline"><?php echo Text::_('MOD_curseforge_GENERATOR_ZEROBASELINE'); ?></label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="curseforge-chart-showvalues" />
+                                <label class="form-check-label" for="curseforge-chart-showvalues"><?php echo Text::_('MOD_curseforge_GENERATOR_SHOWVALUELABELS'); ?></label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="curseforge-chart-showgenerated" checked />
+                                <label class="form-check-label" for="curseforge-chart-showgenerated"><?php echo Text::_('MOD_curseforge_GENERATOR_SHOWGENERATEDAT'); ?></label>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="mb-3">
                         <label for="curseforge-chartdata" class="form-label"><?php echo Text::_('MOD_curseforge_GENERATOR_CHARTDATA'); ?></label>
-                        <textarea class="form-control font-monospace" id="curseforge-chartdata" rows="6" spellcheck="false" placeholder="2026-10-01 1200&#10;2026-10-02 1250">2026-10-01 1180
-2026-10-02 1215
-2026-10-03 1262
-2026-10-04 1290
-2026-10-05 1344
-2026-10-06 1371
-2026-10-07 1420
-2026-10-08 1468
-2026-10-09 1502
-2026-10-10 1549
-2026-10-11 1601
-2026-10-12 1648
-2026-10-13 1690
-2026-10-14 1743</textarea>
+                        <textarea class="form-control font-monospace" id="curseforge-chartdata" rows="6" spellcheck="false" placeholder="2026-10-01 1200&#10;2026-10-02 1250"></textarea>
                         <div class="form-text"><?php echo Text::_('MOD_curseforge_GENERATOR_CHARTDATA_DESC'); ?></div>
                     </div>
 

@@ -21,6 +21,11 @@
     return node && typeof node.value === "string" ? node.value.trim() : fallback;
   }
 
+  function checked(id) {
+    var node = el(id);
+    return !!(node && node.checked);
+  }
+
   // ---- Colour picker sync ----
   function syncColorPicker(pickerId, textId) {
     var picker = el(pickerId);
@@ -94,6 +99,26 @@
       labelInputTrack.dataset.userEdited = "true";
     });
   }
+
+  // ---- Chart title mode (custom title field is only shown when relevant) ----
+  var titleModeSelect = el("curseforge-chart-titlemode");
+  var titleTextWrap = el("curseforge-chart-titletext-wrap");
+
+  function syncTitleMode() {
+    if (!titleModeSelect || !titleTextWrap) return;
+
+    if (titleModeSelect.value === "custom") {
+      titleTextWrap.classList.remove("d-none");
+    } else {
+      titleTextWrap.classList.add("d-none");
+    }
+  }
+
+  if (titleModeSelect) {
+    titleModeSelect.addEventListener("change", syncTitleMode);
+  }
+
+  syncTitleMode();
 
   // ---- Tab switching ----
   var tabs = curseforge.querySelectorAll(".nav-tab-btn");
@@ -203,17 +228,32 @@
     formData.append("owner", value("curseforge-owner", ""));
     formData.append("repo", value("curseforge-repo", ""));
     formData.append("branch", value("curseforge-branch", ""));
-    formData.append("jsonpath", "curseforge/downloads.json");
+    formData.append("jsonpath", config.jsonPath || "stats/downloads.json");
+    formData.append("provider", value("curseforge-provider", "raw"));
+
+    // Badge fields
     formData.append("metric", value("curseforge-metric", "total|$.stats.total|0A7EA4|downloads/total"));
     formData.append("label", value("curseforge-label", "downloads/total"));
     formData.append("color", value("curseforge-color", "0A7EA4"));
-    formData.append("style", value("curseforge-style", "flat-square"));
-    formData.append("provider", "raw");
     formData.append("labelcolor", value("curseforge-label-color", "555555"));
-    formData.append("logo", "");
-    formData.append("cache", "0");
+    formData.append("style", value("curseforge-style", "flat-square"));
+    formData.append("logo", value("curseforge-logo", "github"));
+    formData.append("cache", value("curseforge-cache", "900"));
+
+    // Chart fields
     formData.append("charttype", value("curseforge-charttype", "total-trend"));
     formData.append("theme", value("curseforge-theme", "slate"));
+    formData.append("width", value("curseforge-chart-width", "1000"));
+    formData.append("height", value("curseforge-chart-height", "360"));
+    formData.append("yticks", value("curseforge-chart-yticks", "6"));
+    formData.append("xlabeleverydays", value("curseforge-chart-xlabels", "0"));
+    formData.append("datelabelformat", value("curseforge-chart-dateformat", "yyyy-mm-dd"));
+    formData.append("titlemode", value("curseforge-chart-titlemode", "default"));
+    formData.append("titletext", value("curseforge-chart-titletext", ""));
+    formData.append("chartalt", value("curseforge-chart-alt", ""));
+    formData.append("zerobaseline", checked("curseforge-chart-zerobaseline") ? "1" : "0");
+    formData.append("showvaluelabels", checked("curseforge-chart-showvalues") ? "1" : "0");
+    formData.append("showgeneratedat", checked("curseforge-chart-showgenerated") ? "1" : "0");
     formData.append("chartdata", value("curseforge-chartdata", ""));
     // CSRF token
     var csrfToken = Joomla.getOptions("system.csrf.token") || Joomla.getOptions("csrf.token");
@@ -268,6 +308,12 @@
 
     el("curseforge-badge-url").textContent = badge.url;
     el("curseforge-badge-md").textContent = badge.md || "";
+
+    var shieldsUrl = el("curseforge-badge-shields-url");
+    var shieldsMd = el("curseforge-badge-shields-md");
+
+    if (shieldsUrl) shieldsUrl.textContent = badge.shieldsUrl || "";
+    if (shieldsMd) shieldsMd.textContent = badge.shieldsMd || "";
 
     var content = el("curseforge-badge-content");
     var placeholder = el("curseforge-badge-placeholder");

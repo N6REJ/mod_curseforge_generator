@@ -12,6 +12,13 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 
+/**
+ * Helper for mod_curseforge_generator.
+ *
+ * Renders badges and charts server-side, following the conventions of the
+ * justagwas GitHub Downloads Action (GDA) generator lab:
+ * https://www.justagwas.com/projects/gda/
+ */
 class ModCurseforgeGeneratorHelper
 {
     private const SAFE_SLUG  = '/^[A-Za-z0-9_.-]+$/';
@@ -20,7 +27,7 @@ class ModCurseforgeGeneratorHelper
 
     public const PROVIDERS    = ['raw', 'jsdelivr'];
     public const BADGE_STYLES = ['flat', 'flat-square', 'plastic', 'for-the-badge', 'social'];
-    public const LOGO_CHOICES = ['', 'curseforge'];
+    public const LOGO_CHOICES = ['', 'curseforge', 'github'];
 
     /**
      * Metric definitions: query path, default badge colour and default label.
@@ -36,9 +43,49 @@ class ModCurseforgeGeneratorHelper
         'profile' => ['query' => '$.profile.defaultMode', 'color' => '5E35B1', 'label' => 'downloads/profile'],
     ];
 
-    public const DEFAULT_LABEL_COLOR = '555555';
+    public const DEFAULT_LABEL_COLOR   = '555555';
+    public const DEFAULT_CACHE_SECONDS = 900;
+
+    public const CHART_TYPES              = ['total-trend', 'daily', 'weekly', 'monthly', 'yearly'];
+    public const CHART_THEMES             = ['black', 'slate', 'orange'];
+    public const CHART_DATE_LABEL_FORMATS = ['yyyy-mm-dd', 'yy/mm/dd', 'dd/mm', 'mm/dd', 'none'];
+    public const CHART_TITLE_MODES        = ['default', 'custom', 'none'];
+
+    /**
+     * Per chart type metadata, mirroring the GDA action chart config.
+     */
+    public const CHART_TYPE_META = [
+        'total-trend' => ['latestLabel' => 'Latest total', 'bucket' => 'total', 'rangeDays' => 0],
+        'daily'       => ['latestLabel' => 'Latest day',   'bucket' => 'day',   'rangeDays' => 1],
+        'weekly'      => ['latestLabel' => 'Latest week',  'bucket' => 'week',  'rangeDays' => 7],
+        'monthly'     => ['latestLabel' => 'Latest month', 'bucket' => 'month', 'rangeDays' => 30],
+        'yearly'      => ['latestLabel' => 'Latest year',  'bucket' => 'year',  'rangeDays' => 365],
+    ];
+
+    /**
+     * Per theme palette, mirroring the GDA action chart config.
+     */
+    public const CHART_THEME_META = [
+        'black'  => [
+            'background' => '#0b0b0d', 'title' => '#f8fafc', 'subtitle' => '#cbd5e1',
+            'grid' => '#1f2937', 'axis' => '#94a3b8', 'line' => '#22d3ee', 'dot' => '#22d3ee',
+            'latest' => '#f8fafc', 'fill' => '#22d3ee', 'empty' => '#cbd5e1', 'value' => '#cbd5e1',
+        ],
+        'slate'  => [
+            'background' => '#0f172a', 'title' => '#e2e8f0', 'subtitle' => '#94a3b8',
+            'grid' => '#1e293b', 'axis' => '#94a3b8', 'line' => '#60a5fa', 'dot' => '#60a5fa',
+            'latest' => '#e2e8f0', 'fill' => '#60a5fa', 'empty' => '#cbd5e1', 'value' => '#cbd5e1',
+        ],
+        'orange' => [
+            'background' => '#fff7ed', 'title' => '#7c2d12', 'subtitle' => '#9a3412',
+            'grid' => '#fed7aa', 'axis' => '#c2410c', 'line' => '#ea580c', 'dot' => '#ea580c',
+            'latest' => '#7c2d12', 'fill' => '#f97316', 'empty' => '#9a3412', 'value' => '#9a3412',
+        ],
+    ];
 
     private const CURSEFORGE_LOGO_PATH = 'M18.326 9.2145S23.2261 8.4418 24 6.1882h-7.5066V4.4H0l2.0318 2.3576V9.173s5.1267-.2665 7.1098 1.2372c2.7146 2.516-3.053 5.917-3.053 5.917L5.0995 19.6c1.5465-1.4726 4.494-3.3775 9.8983-3.2857-2.0565.65-4.1245 1.6651-5.7344 3.2857h10.9248l-1.0288-3.2726s-7.918-4.6688-.8336-7.1127z';
+
+    private const GITHUB_LOGO_PATH = 'M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12';
 
     private const VERDANA_WIDTHS = [
         ' ' => 3.9, '!' => 4.7, '"' => 5.5, '#' => 8.2, '$' => 7.0, '%' => 10.4, '&' => 8.2, "'" => 3.1,
@@ -144,6 +191,24 @@ class ModCurseforgeGeneratorHelper
     }
 
     /**
+     * Clamp an integer into a range.
+     */
+    public static function clampInt($value, $min, $max, $fallback)
+    {
+        $value = (int) $value;
+
+        if ($value < $min) {
+            return $min;
+        }
+
+        if ($value > $max) {
+            return $max;
+        }
+
+        return $value;
+    }
+
+    /**
      * Build a Shields.io dynamic JSON badge URL.
      */
     public static function buildBadgeUrl($owner, $repo, $branch, $jsonPath, $query, $label, $color, $style = 'flat-square', $labelColor = '', $logo = '', $cacheSeconds = 900, $provider = 'raw')
@@ -201,16 +266,47 @@ class ModCurseforgeGeneratorHelper
 
     /**
      * Build the module endpoint URL that renders the chart SVG.
+     *
+     * @param   string  $owner    GitHub owner
+     * @param   string  $repo     Repository name
+     * @param   array   $options  Chart options
+     *
+     * @return  string
      */
-    public static function buildChartUrl($owner, $repo, $chartType, $theme, $chartData, $color)
+    public static function buildChartUrl($owner, $repo, array $options)
     {
-        return Uri::root() . 'index.php?option=com_ajax&module=curseforge_generator&method=chart&format=raw'
-            . '&owner=' . urlencode($owner)
-            . '&repo=' . urlencode($repo)
-            . '&charttype=' . urlencode($chartType)
-            . '&theme=' . urlencode($theme)
-            . '&color=' . urlencode($color)
-            . '&chartdata=' . urlencode($chartData);
+        $params = [
+            'owner'            => $owner,
+            'repo'             => $repo,
+            'branch'           => $options['branch'],
+            'jsonpath'         => $options['jsonpath'],
+            'provider'         => $options['provider'],
+            'charttype'        => $options['charttype'],
+            'theme'            => $options['theme'],
+            'width'            => $options['width'],
+            'height'           => $options['height'],
+            'zerobaseline'     => $options['zerobaseline'] ? 1 : 0,
+            'yticks'           => $options['yticks'],
+            'xlabeleverydays'  => $options['xlabeleverydays'],
+            'showvaluelabels'  => $options['showvaluelabels'] ? 1 : 0,
+            'datelabelformat'  => $options['datelabelformat'],
+            'showgeneratedat'  => $options['showgeneratedat'] ? 1 : 0,
+            'titlemode'        => $options['titlemode'],
+            'titletext'        => $options['titletext'],
+            'chartalt'         => $options['chartalt'],
+        ];
+
+        if ($options['chartdata'] !== '') {
+            $params['chartdata'] = $options['chartdata'];
+        }
+
+        $query = [];
+
+        foreach ($params as $key => $value) {
+            $query[] = $key . '=' . rawurlencode((string) $value);
+        }
+
+        return Uri::root() . 'index.php?option=com_ajax&module=curseforge_generator&method=chart&format=raw&' . implode('&', $query);
     }
 
     private static function measureText($text, $fontSize = 11, $letterSpacing = 0)
@@ -284,11 +380,10 @@ class ModCurseforgeGeneratorHelper
         $labelText  = $isForBadge ? strtoupper((string) $label) : (string) $label;
         $msgText    = $isForBadge ? strtoupper((string) $message) : (string) $message;
 
-        $fontSize     = $isForBadge ? 10 : 11;
+        $fontSize      = $isForBadge ? 10 : 11;
         $letterSpacing = $isForBadge ? 1 : 0;
-        $height       = $isForBadge ? 28 : 20;
-        $radius       = ($style === 'flat-square') ? 0 : 4;
-        $if $style === 'flat' $radius = 3;
+        $height        = $isForBadge ? 28 : 20;
+
         if ($style === 'flat') {
             $radius = 3;
         } elseif ($style === 'flat-square') {
@@ -298,7 +393,7 @@ class ModCurseforgeGeneratorHelper
         }
 
         $baseline = $isForBadge ? 18 : 14;
-        $logoPad  = ($logo === 'curseforge') ? 16 : 0;
+        $logoPad  = ($logo !== '') ? 16 : 0;
 
         $labelW = (int) ceil(self::measureText($labelText, $fontSize, $letterSpacing)) + 10;
         $msgW   = (int) ceil(self::measureText($msgText, $fontSize, $letterSpacing)) + 10 + $logoPad;
@@ -341,8 +436,9 @@ class ModCurseforgeGeneratorHelper
             . '<text x="' . $labelTextX . '" y="' . $baseline . '" fill="' . $labelTextColor . '">' . self::escapeXmlText($labelText) . '</text>'
             . '</g>';
 
-        if ($logo === 'curseforge') {
-            $svg .= '<g transform="translate(' . ($msgAreaStart + 3) . ',' . (($height - 14) / 2) . ') scale(0.5833)"><path d="' . self::CURSEFORGE_LOGO_PATH . '" fill="#fff"/></g>';
+        if ($logo !== '') {
+            $logoPath = ($logo === 'github') ? self::GITHUB_LOGO_PATH : self::CURSEFORGE_LOGO_PATH;
+            $svg .= '<g transform="translate(' . ($msgAreaStart + 3) . ',' . (($height - 14) / 2) . ') scale(0.5833)"><path d="' . $logoPath . '" fill="#fff"/></g>';
         }
 
         $svg .= '<g fill="' . $msgTextColor . '" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="' . $fontSize . '"';
@@ -450,6 +546,26 @@ class ModCurseforgeGeneratorHelper
     }
 
     /**
+     * Extract the daily snapshot series (date => total) from a stats payload.
+     */
+    public static function extractSeries($data)
+    {
+        if (!is_array($data)) {
+            return [];
+        }
+
+        $series = [];
+
+        if (isset($data['snapshots']['series']) && is_array($data['snapshots']['series'])) {
+            $series = $data['snapshots']['series'];
+        } elseif (isset($data['series']) && is_array($data['series'])) {
+            $series = $data['series'];
+        }
+
+        return self::normalizeSeries($series);
+    }
+
+    /**
      * Render a server-side badge SVG for com_ajax method=badge.
      */
     public static function badgeAjax()
@@ -460,7 +576,7 @@ class ModCurseforgeGeneratorHelper
         $owner    = self::sanitizeSlug($input->getString('owner', ''), '');
         $repo     = self::sanitizeSlug($input->getString('repo', ''), '');
         $branch   = self::sanitizeSlug($input->getString('branch', ''), 'stats-data');
-        $jsonPath = self::sanitizePath($input->getString('jsonpath', ''), 'curseforge/downloads.json');
+        $jsonPath = self::sanitizePath($input->getString('jsonpath', ''), 'stats/downloads.json');
         $provider = self::sanitizeChoice($input->getString('provider', 'raw'), self::PROVIDERS, 'raw');
         $query    = $input->getString('query', '$.stats.total');
         $label    = trim((string) $input->getString('label', 'downloads/total'));
@@ -468,7 +584,7 @@ class ModCurseforgeGeneratorHelper
         $labelColor = self::sanitizeColor($input->getString('labelcolor', ''), self::DEFAULT_LABEL_COLOR);
         $style    = self::sanitizeChoice($input->getString('style', 'flat-square'), self::BADGE_STYLES, 'flat-square');
         $logo     = self::sanitizeChoice($input->getString('logo', ''), self::LOGO_CHOICES, '');
-        $cache    = (int) $input->getInt('cache', 900);
+        $cache    = (int) $input->getInt('cache', self::DEFAULT_CACHE_SECONDS);
         $cache    = max(0, min(86400, $cache));
 
         $app->setHeader('Content-Type', 'image/svg+xml; charset=utf-8', true);
@@ -501,10 +617,47 @@ class ModCurseforgeGeneratorHelper
 
         if ($message === '') {
             $message = 'unavailable';
-            return self::buildBadgeSvg($label, $message, $color, $labelColor, $style, $logo);
         }
 
         return self::buildBadgeSvg($label, $message, $color, $labelColor, $style, $logo);
+    }
+
+    /* ---------------------------------------------------------------------
+     * Chart helpers (ported from the GDA action chart.js / chart-config.js)
+     * ------------------------------------------------------------------ */
+
+    /**
+     * Keep only valid YYYY-MM-DD entries with non negative values.
+     */
+    public static function normalizeSeries($series)
+    {
+        if (!is_array($series)) {
+            return [];
+        }
+
+        $normalized = [];
+
+        foreach ($series as $date => $value) {
+            if (!is_string($date) || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+                continue;
+            }
+
+            if (!is_numeric($value)) {
+                continue;
+            }
+
+            $value = (float) $value;
+
+            if (!is_finite($value) || $value < 0) {
+                continue;
+            }
+
+            $normalized[$date] = (int) floor($value);
+        }
+
+        ksort($normalized);
+
+        return $normalized;
     }
 
     /**
@@ -525,137 +678,502 @@ class ModCurseforgeGeneratorHelper
         return $points;
     }
 
-    /**
-     * Turn the totals into the labels and values for the chosen chart type.
-     */
-    public static function aggregateChartData(array $points, $chartType)
+    private static function shiftDate($dateString, $daysAgo)
     {
-        $labels = array_keys($points);
-        $values = array_values($points);
+        $date = new \DateTimeImmutable($dateString . ' 00:00:00', new \DateTimeZone('UTC'));
+        $days = (int) $daysAgo;
 
-        if ($chartType === 'total-trend') {
-            return [$labels, $values];
+        if ($days !== 0) {
+            $date = $date->modify('-' . $days . ' days');
         }
 
-        $deltas = [];
+        return $date->format('Y-m-d');
+    }
 
-        for ($i = 1; $i < count($values); $i++) {
-            $deltas[$labels[$i]] = $values[$i] - $values[$i - 1];
-        }
+    private static function startOfIsoWeek($dateString)
+    {
+        $date = new \DateTimeImmutable($dateString . ' 00:00:00', new \DateTimeZone('UTC'));
+        $isoDay = (int) $date->format('N');
 
-        if ($chartType === 'daily') {
-            return [array_keys($deltas), array_values($deltas)];
-        }
+        return $date->modify('-' . ($isoDay - 1) . ' days')->format('Y-m-d');
+    }
 
-        $groups = [];
+    private static function startOfMonth($dateString)
+    {
+        $date = new \DateTimeImmutable($dateString . ' 00:00:00', new \DateTimeZone('UTC'));
 
-        if ($chartType === 'weekly') {
-            foreach (array_chunk($deltas, 7, true) as $chunk) {
-                $firstKey = array_key_first($chunk);
-                $groups[$firstKey] = array_sum($chunk);
-            }
-        } else {
-            $length = $chartType === 'monthly' ? 7 : 4;
+        return $date->setDate((int) $date->format('Y'), (int) $date->format('m'), 1)->format('Y-m-d');
+    }
 
-            foreach ($deltas as $date => $delta) {
-                $key = substr($date, 0, $length);
-                $groups[$key] = ($groups[$key] ?? 0) + $delta;
-            }
-        }
+    private static function startOfYear($dateString)
+    {
+        $date = new \DateTimeImmutable($dateString . ' 00:00:00', new \DateTimeZone('UTC'));
 
-        return [array_keys($groups), array_values($groups)];
+        return $date->setDate((int) $date->format('Y'), 1, 1)->format('Y-m-d');
     }
 
     /**
-     * Build an SVG line chart from labels and values.
+     * Find the entry used as the baseline for a bucket.
      */
-    public static function buildChartSvg(array $labels, array $values, $theme, $color, $title)
+    private static function pickBaseline(array $entries, $cutoffDate, $maxIndex)
     {
-        $palettes = [
-            'black'  => ['background' => '#0b0b0d', 'grid' => '#1f2937', 'axis' => '#94a3b8', 'text' => '#f8fafc', 'sub' => '#cbd5e1', 'line' => '#22d3ee'],
-            'slate'  => ['background' => '#0f172a', 'grid' => '#1e293b', 'axis' => '#94a3b8', 'text' => '#e2e8f0', 'sub' => '#94a3b8', 'line' => '#56ABC8'],
-            'orange' => ['background' => '#fff7ed', 'grid' => '#fed7aa', 'axis' => '#c2410c', 'text' => '#7c2d12', 'sub' => '#9a3412', 'line' => '#ea580c'],
+        for ($index = 0; $index <= $maxIndex; $index++) {
+            if ($entries[$index][0] === $cutoffDate) {
+                return $entries[$index];
+            }
+        }
+
+        for ($index = 0; $index <= $maxIndex; $index++) {
+            if ($entries[$index][0] > $cutoffDate) {
+                return $entries[$index];
+            }
+        }
+
+        for ($index = $maxIndex; $index >= 0; $index--) {
+            if ($entries[$index][0] < $cutoffDate) {
+                return $entries[$index];
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Convert the total trend into the requested bucket values.
+     */
+    private static function toChartEntries(array $entries, $chartType)
+    {
+        if ($chartType === 'total-trend') {
+            $result = [];
+
+            foreach ($entries as $entry) {
+                $result[] = ['date' => $entry[0], 'value' => $entry[1]];
+            }
+
+            return $result;
+        }
+
+        $meta = self::CHART_TYPE_META[$chartType] ?? self::CHART_TYPE_META['daily'];
+        $bucket = $meta['bucket'];
+
+        $result = [];
+
+        foreach ($entries as $index => $entry) {
+            if ($bucket === 'day') {
+                $bucketStart = self::shiftDate($entry[0], 1);
+            } elseif ($bucket === 'week') {
+                $bucketStart = self::startOfIsoWeek($entry[0]);
+            } elseif ($bucket === 'month') {
+                $bucketStart = self::startOfMonth($entry[0]);
+            } else {
+                $bucketStart = self::startOfYear($entry[0]);
+            }
+
+            $baseline = self::pickBaseline($entries, $bucketStart, $index);
+            $baselineValue = $baseline !== null ? $baseline[1] : $entry[1];
+
+            $result[] = ['date' => $entry[0], 'value' => max(0, $entry[1] - $baselineValue)];
+        }
+
+        return $result;
+    }
+
+    /**
+     * Proportional chart layout.
+     */
+    private static function buildChartLayout($width, $height)
+    {
+        $left   = max(56, (int) round($width * 0.064));
+        $right  = max(24, (int) round($width * 0.024));
+        $top    = max(48, (int) round($height * 0.144));
+        $bottom = max(52, (int) round($height * 0.156));
+
+        return [
+            'left'         => $left,
+            'right'        => $right,
+            'top'          => $top,
+            'bottom'       => $bottom,
+            'titleSize'    => max(18, (int) round($height * 0.067)),
+            'subtitleSize' => max(11, (int) round($height * 0.036)),
+            'axisSize'     => max(10, (int) round($height * 0.033)),
+            'latestSize'   => max(12, (int) round($height * 0.039)),
+            'emptySize'    => max(14, (int) round($height * 0.044)),
+            'valueSize'    => max(9, (int) round($height * 0.03)),
         ];
-        $palette = $palettes[$theme] ?? $palettes['slate'];
+    }
 
-        $width  = 1000;
-        $height = 360;
-        $left   = 64;
-        $right  = 976;
-        $top    = 52;
-        $bottom = 304;
-        $innerW = $right - $left;
-        $innerH = $bottom - $top;
-        $count  = count($values);
-        $maxV   = $count ? max(max($values), 1) : 1;
-        $stroke = $palette['line'] ?? ('#' . $color);
-        $title  = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
+    /**
+     * Pick the point indices that receive an x axis label.
+     */
+    private static function buildXLabelIndices(array $points, $xLabelEveryDays)
+    {
+        $count = count($points);
 
-        $svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' . $width . '" height="' . $height . '" viewBox="0 0 ' . $width . ' ' . $height . '" role="img" aria-label="' . $title . '">'
-            . '<defs><linearGradient id="fill" x1="0" y1="0" x2="0" y2="1">'
-            . '<stop offset="0%" stop-color="' . $stroke . '" stop-opacity="0.32"/>'
-            . '<stop offset="100%" stop-color="' . $stroke . '" stop-opacity="0.05"/>'
-            . '</linearGradient></defs>'
-            . '<rect width="' . $width . '" height="' . $height . '" rx="16" fill="' . $palette['background'] . '"/>'
-            . '<text x="' . $left . '" y="34" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="' . $palette['text'] . '">' . $title . '</text>';
-
-        for ($j = 0; $j <= 6; $j++) {
-            $y     = $top + $j * $innerH / 6;
-            $value = (int) round($maxV * (6 - $j) / 6);
-            $svg  .= '<line x1="' . $left . '" y1="' . $y . '" x2="' . $right . '" y2="' . $y . '" stroke="' . $palette['grid'] . '" stroke-width="1"/>'
-                . '<text x="56" y="' . ($y + 4) . '" text-anchor="end" font-family="Arial, sans-serif" font-size="12" fill="' . $palette['axis'] . '">' . $value . '</text>';
+        if ($count <= 1) {
+            return [0];
         }
 
-        if ($count) {
-            $points = [];
+        $indices = [0];
 
-            foreach ($values as $i => $value) {
-                $x = $count > 1 ? $left + $i * $innerW / ($count - 1) : $left + $innerW / 2;
-                $y = $bottom - ($value / $maxV) * $innerH;
-                $points[] = [round($x, 2), round($y, 2)];
+        if ($xLabelEveryDays > 0) {
+            $lastLabelDate = $points[0]['date'];
+
+            for ($index = 1; $index < $count - 1; $index++) {
+                if (self::daysBetween($points[$index]['date'], $lastLabelDate) >= $xLabelEveryDays) {
+                    $indices[] = $index;
+                    $lastLabelDate = $points[$index]['date'];
+                }
             }
-
-            $first = $points[0];
-            $last  = $points[$count - 1];
-            $area  = 'M ' . $first[0] . ' ' . $bottom;
-            $line  = [];
-
-            foreach ($points as $p) {
-                $area .= ' L ' . $p[0] . ' ' . $p[1];
-                $line[] = $p[0] . ',' . $p[1];
-            }
-
-            $area .= ' L ' . $last[0] . ' ' . $bottom . ' Z';
-
-            $svg .= '<path d="' . $area . '" fill="url(#fill)"/>'
-                . '<polyline points="' . implode(' ', $line) . '" fill="none" stroke="' . $stroke . '" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>';
-
-            $svg .= '<circle cx="' . $last[0] . '" cy="' . $last[1] . '" r="4.5" fill="' . $stroke . '"/>';
-
-            $step  = max(1, (int) ceil(($count - 1) / 6));
-            $ticks = [];
-
-            for ($i = 0; $i < $count; $i += $step) {
-                $ticks[] = $i;
-            }
-
-            if (end($ticks) !== $count - 1) {
-                $ticks[] = $count - 1;
-            }
-
-            foreach ($ticks as $i) {
-                $anchor = $i === 0 ? 'start' : ($i === $count - 1 ? 'end' : 'middle');
-                $svg   .= '<text x="' . $points[$i][0] . '" y="336" text-anchor="' . $anchor . '" font-family="Arial, sans-serif" font-size="12" fill="' . $palette['axis'] . '">' . htmlspecialchars((string) $labels[$i], ENT_QUOTES, 'UTF-8') . '</text>';
-            }
-
-            $svg .= '<text x="' . $right . '" y="34" text-anchor="end" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="' . $palette['text'] . '">Latest total: ' . (int) $values[$count - 1] . '</text>';
         } else {
-            $svg .= '<text x="' . ($width / 2) . '" y="' . ($height / 2) . '" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="' . $palette['sub'] . '">No data</text>';
+            $maxLabels = 6;
+            $step = max(1, (int) floor(($count - 1) / ($maxLabels - 1)));
+
+            for ($index = $step; $index < $count - 1; $index += $step) {
+                $indices[] = $index;
+            }
         }
 
-        $svg .= '<text x="' . $left . '" y="352" font-family="Arial, sans-serif" font-size="13" fill="' . $palette['sub'] . '">Generated ' . date('Y-m-d') . '</text>';
+        $lastIndex = $count - 1;
 
-        return $svg . '</svg>';
+        if (!in_array($lastIndex, $indices, true)) {
+            $indices[] = $lastIndex;
+        }
+
+        return $indices;
+    }
+
+    private static function toDayNumber($dateString)
+    {
+        $date = new \DateTimeImmutable($dateString . ' 00:00:00', new \DateTimeZone('UTC'));
+
+        return (int) floor($date->getTimestamp() / 86400);
+    }
+
+    private static function daysBetween($dateA, $dateB)
+    {
+        return abs(self::toDayNumber($dateA) - self::toDayNumber($dateB));
+    }
+
+    private static function formatNumber($value)
+    {
+        return number_format((float) $value, 0, '.', ',');
+    }
+
+    private static function formatDateLabel($dateString, $dateLabelFormat)
+    {
+        if ($dateLabelFormat === 'none') {
+            return '';
+        }
+
+        if ($dateLabelFormat === 'yyyy-mm-dd') {
+            return $dateString;
+        }
+
+        $date = new \DateTimeImmutable($dateString . ' 00:00:00', new \DateTimeZone('UTC'));
+        $year = (int) $date->format('Y');
+        $yy = str_pad((string) ($year % 100), 2, '0', STR_PAD_LEFT);
+        $mm = $date->format('m');
+        $dd = $date->format('d');
+
+        if ($dateLabelFormat === 'yy/mm/dd') {
+            return $yy . '/' . $mm . '/' . $dd;
+        }
+
+        if ($dateLabelFormat === 'dd/mm') {
+            return $dd . '/' . $mm;
+        }
+
+        if ($dateLabelFormat === 'mm/dd') {
+            return $mm . '/' . $dd;
+        }
+
+        return $dateString;
+    }
+
+    /**
+     * Format the generated timestamp using the requested date label format.
+     */
+    public static function formatGeneratedDate($generatedAt, $dateLabelFormat)
+    {
+        $generatedAt = (string) $generatedAt;
+
+        if (strlen($generatedAt) < 10) {
+            return $generatedAt;
+        }
+
+        $datePart = substr($generatedAt, 0, 10);
+        $format = $dateLabelFormat === 'none' ? 'yyyy-mm-dd' : $dateLabelFormat;
+
+        return self::formatDateLabel($datePart, $format);
+    }
+
+    private static function buildChartTitle($owner, $repo, $titleMode, $titleText)
+    {
+        if ($titleMode === 'none') {
+            return '';
+        }
+
+        if ($titleMode === 'custom') {
+            $trimmed = trim((string) $titleText);
+
+            return $trimmed !== '' ? $trimmed : $owner . '/' . $repo . ' downloads';
+        }
+
+        return $owner . '/' . $repo . ' downloads';
+    }
+
+    /**
+     * Build the chart SVG.
+     *
+     * @param   array  $series   date => value map
+     * @param   array  $options  chart options
+     *
+     * @return  string
+     */
+    public static function buildChartSvg(array $series, array $options = [])
+    {
+        $options = array_merge([
+            'owner'            => 'owner',
+            'repo'             => 'repo',
+            'generatedAt'      => '',
+            'chartType'        => 'total-trend',
+            'chartTheme'       => 'slate',
+            'width'            => 1000,
+            'height'           => 360,
+            'zeroBaseline'     => true,
+            'yTicks'           => 6,
+            'xLabelEveryDays'  => 0,
+            'showValueLabels'  => false,
+            'dateLabelFormat'  => 'yyyy-mm-dd',
+            'showGeneratedAt'  => true,
+            'titleMode'        => 'default',
+            'titleText'        => '',
+            'altText'          => '',
+        ], $options);
+
+        $owner = (string) $options['owner'];
+        $repo  = (string) $options['repo'];
+
+        $chartType = self::sanitizeChoice($options['chartType'], self::CHART_TYPES, 'total-trend');
+        $chartTheme = self::sanitizeChoice($options['chartTheme'], self::CHART_THEMES, 'slate');
+        $dateLabelFormat = self::sanitizeChoice($options['dateLabelFormat'], self::CHART_DATE_LABEL_FORMATS, 'yyyy-mm-dd');
+        $titleMode = self::sanitizeChoice($options['titleMode'], self::CHART_TITLE_MODES, 'default');
+
+        $width  = self::clampInt($options['width'], 640, 4096, 1000);
+        $height = self::clampInt($options['height'], 240, 2160, 360);
+        $yTicks = self::clampInt($options['yTicks'], 2, 12, 6);
+        $xLabelEveryDays = self::clampInt($options['xLabelEveryDays'], 0, 365, 0);
+
+        $typeMeta  = self::CHART_TYPE_META[$chartType];
+        $themeMeta = self::CHART_THEME_META[$chartTheme];
+
+        $layout = self::buildChartLayout($width, $height);
+        $left   = $layout['left'];
+        $right  = $layout['right'];
+        $top    = $layout['top'];
+        $bottom = $layout['bottom'];
+
+        $plotWidth  = $width - $left - $right;
+        $plotHeight = $height - $top - $bottom;
+
+        $title    = self::buildChartTitle($owner, $repo, $titleMode, $options['titleText']);
+        $subtitle = $options['showGeneratedAt']
+            ? 'Generated ' . self::formatGeneratedDate($options['generatedAt'], $dateLabelFormat)
+            : '';
+
+        $ariaLabel = trim((string) $options['altText']);
+
+        if ($ariaLabel === '') {
+            $ariaLabel = ($title !== '' ? $title : $owner . '/' . $repo . ' downloads') . ' chart';
+        }
+
+        $gradientId = 'fill-' . preg_replace('/[^a-z0-9]/', '-', strtolower($chartType)) . '-' . $chartTheme;
+
+        $titleNode = $title !== ''
+            ? '<text class="title" x="' . $left . '" y="' . (int) round($top * 0.65) . '">' . self::escapeXmlText($title) . '</text>'
+            : '';
+
+        $subtitleNode = $subtitle !== ''
+            ? '<text class="sub" x="' . $left . '" y="' . ($height - max(8, (int) round($layout['subtitleSize'] * 0.46))) . '">' . self::escapeXmlText($subtitle) . '</text>'
+            : '';
+
+        $entries = self::normalizeSeries($series);
+
+        if (empty($entries)) {
+            return '<?xml version="1.0" encoding="UTF-8"?>' . "\n"
+                . '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' . $width . ' ' . $height . '" role="img" aria-label="'
+                . self::escapeXmlAttr($ariaLabel) . '">' . "\n"
+                . '  <defs>' . "\n"
+                . '    <style>' . "\n"
+                . '      .bg { fill: ' . $themeMeta['background'] . '; }' . "\n"
+                . '      .title { font: 700 ' . $layout['titleSize'] . 'px Arial, sans-serif; fill: ' . $themeMeta['title'] . '; }' . "\n"
+                . '      .sub { font: 400 ' . $layout['subtitleSize'] . 'px Arial, sans-serif; fill: ' . $themeMeta['subtitle'] . '; }' . "\n"
+                . '      .empty { font: 600 ' . $layout['emptySize'] . 'px Arial, sans-serif; fill: ' . $themeMeta['empty'] . '; }' . "\n"
+                . '    </style>' . "\n"
+                . '  </defs>' . "\n"
+                . '  <rect class="bg" x="0" y="0" width="' . $width . '" height="' . $height . '" rx="16" />' . "\n"
+                . '  ' . $titleNode . "\n"
+                . '  ' . $subtitleNode . "\n"
+                . '  <text class="empty" x="' . (int) round($width / 2) . '" y="' . (int) round($height / 2) . '" text-anchor="middle">No snapshot data yet</text>' . "\n"
+                . '</svg>' . "\n";
+        }
+
+        $chartEntries = self::toChartEntries(array_values(array_map(null, array_keys($entries), array_values($entries))), $chartType);
+
+        $values  = array_column($chartEntries, 'value');
+        $rawMin  = min($values);
+        $rawMax  = max($values);
+        $scaleMin = $options['zeroBaseline'] ? 0 : $rawMin;
+        $scaleMax = $rawMax;
+
+        if ($scaleMax <= $scaleMin) {
+            $scaleMax = $scaleMin + 1;
+        }
+
+        $safeRange   = $scaleMax - $scaleMin;
+        $latestValue = $chartEntries[count($chartEntries) - 1]['value'];
+        $count       = count($chartEntries);
+
+        $points = [];
+
+        foreach ($chartEntries as $index => $entry) {
+            $x = $count > 1 ? $left + ($index / ($count - 1)) * $plotWidth : $left + $plotWidth / 2;
+            $y = $top + (($scaleMax - $entry['value']) / $safeRange) * $plotHeight;
+
+            $points[] = [
+                'date'  => $entry['date'],
+                'value' => $entry['value'],
+                'x'     => $x,
+                'y'     => $y,
+            ];
+        }
+
+        $pointText = [];
+
+        foreach ($points as $point) {
+            $pointText[] = number_format($point['x'], 2, '.', '') . ',' . number_format($point['y'], 2, '.', '');
+        }
+
+        $areaPath = 'M ' . number_format($points[0]['x'], 2, '.', '') . ' ' . ($top + $plotHeight);
+
+        foreach ($points as $point) {
+            $areaPath .= ' L ' . number_format($point['x'], 2, '.', '') . ' ' . number_format($point['y'], 2, '.', '');
+        }
+
+        $areaPath .= ' L ' . number_format($points[$count - 1]['x'], 2, '.', '') . ' ' . ($top + $plotHeight) . ' Z';
+
+        $grid = [];
+
+        for ($index = 0; $index <= $yTicks; $index++) {
+            $y = $top + ($index / $yTicks) * $plotHeight;
+            $value = (int) round($scaleMax - ($index / $yTicks) * $safeRange);
+
+            $grid[] = '<line x1="' . $left . '" y1="' . number_format($y, 2, '.', '') . '" x2="' . ($width - $right) . '" y2="' . number_format($y, 2, '.', '') . '" class="grid"/>';
+            $grid[] = '<text x="' . ($left - 8) . '" y="' . number_format($y + 4, 2, '.', '') . '" text-anchor="end" class="axis">' . self::escapeXmlText(self::formatNumber($value)) . '</text>';
+        }
+
+        $xLabelIndices = self::buildXLabelIndices($points, $xLabelEveryDays);
+        $xLabelY = $height - max(22, (int) round($bottom * 0.43));
+        $xLabels = [];
+
+        if ($dateLabelFormat !== 'none') {
+            foreach ($xLabelIndices as $index) {
+                $point = $points[$index];
+                $isFirst = $index === 0;
+                $isLast = $index === $count - 1;
+                $anchor = $isFirst ? 'start' : ($isLast ? 'end' : 'middle');
+
+                $xLabels[] = '<text class="axis" x="' . number_format($point['x'], 2, '.', '') . '" y="' . $xLabelY . '" text-anchor="' . $anchor . '">'
+                    . self::escapeXmlText(self::formatDateLabel($point['date'], $dateLabelFormat)) . '</text>';
+            }
+        }
+
+        $valueLabels = '';
+
+        if ($options['showValueLabels']) {
+            $parts = [];
+
+            foreach ($points as $point) {
+                $labelY = max($top + $layout['valueSize'], $point['y'] - 8);
+                $parts[] = '<text class="value" x="' . number_format($point['x'], 2, '.', '') . '" y="' . number_format($labelY, 2, '.', '') . '" text-anchor="middle">'
+                    . self::escapeXmlText(self::formatNumber($point['value'])) . '</text>';
+            }
+
+            $valueLabels = implode("\n  ", $parts);
+        }
+
+        return '<?xml version="1.0" encoding="UTF-8"?>' . "\n"
+            . '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' . $width . ' ' . $height . '" role="img" aria-label="'
+            . self::escapeXmlAttr($ariaLabel) . '">' . "\n"
+            . '  <defs>' . "\n"
+            . '    <linearGradient id="' . $gradientId . '" x1="0" y1="0" x2="0" y2="1">' . "\n"
+            . '      <stop offset="0%" stop-color="' . $themeMeta['fill'] . '" stop-opacity="0.32"/>' . "\n"
+            . '      <stop offset="100%" stop-color="' . $themeMeta['fill'] . '" stop-opacity="0.05"/>' . "\n"
+            . '    </linearGradient>' . "\n"
+            . '    <style>' . "\n"
+            . '      .bg { fill: ' . $themeMeta['background'] . '; }' . "\n"
+            . '      .title { font: 700 ' . $layout['titleSize'] . 'px Arial, sans-serif; fill: ' . $themeMeta['title'] . '; }' . "\n"
+            . '      .sub { font: 400 ' . $layout['subtitleSize'] . 'px Arial, sans-serif; fill: ' . $themeMeta['subtitle'] . '; }' . "\n"
+            . '      .grid { stroke: ' . $themeMeta['grid'] . '; stroke-width: 1; }' . "\n"
+            . '      .axis { font: 400 ' . $layout['axisSize'] . 'px Arial, sans-serif; fill: ' . $themeMeta['axis'] . '; }' . "\n"
+            . '      .line { fill: none; stroke: ' . $themeMeta['line'] . '; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }' . "\n"
+            . '      .dot { fill: ' . $themeMeta['dot'] . '; }' . "\n"
+            . '      .value { font: 600 ' . $layout['valueSize'] . 'px Arial, sans-serif; fill: ' . $themeMeta['value'] . '; }' . "\n"
+            . '      .latest { font: 700 ' . $layout['latestSize'] . 'px Arial, sans-serif; fill: ' . $themeMeta['latest'] . '; }' . "\n"
+            . '    </style>' . "\n"
+            . '  </defs>' . "\n"
+            . '  <rect class="bg" x="0" y="0" width="' . $width . '" height="' . $height . '" rx="16" />' . "\n"
+            . '  ' . $titleNode . "\n"
+            . '  ' . $subtitleNode . "\n"
+            . '  ' . implode("\n  ", $grid) . "\n"
+            . '  <path d="' . $areaPath . '" fill="url(#' . $gradientId . ')"/>' . "\n"
+            . '  <polyline class="line" points="' . implode(' ', $pointText) . '"/>' . "\n"
+            . '  <circle class="dot" cx="' . number_format($points[$count - 1]['x'], 2, '.', '') . '" cy="' . number_format($points[$count - 1]['y'], 2, '.', '') . '" r="4.5"/>' . "\n"
+            . '  ' . $valueLabels . "\n"
+            . '  ' . implode("\n  ", $xLabels) . "\n"
+            . '  <text class="latest" x="' . ($width - $right) . '" y="' . (int) round($top * 0.65) . '" text-anchor="end">'
+            . self::escapeXmlText($typeMeta['latestLabel'] . ': ' . self::formatNumber($latestValue)) . '</text>' . "\n"
+            . '</svg>' . "\n";
+    }
+
+    /**
+     * Collect and sanitize the chart options from a request.
+     *
+     * @param   object  $input  Joomla input object (request)
+     *
+     * @return  array
+     */
+    public static function chartOptionsFromRequest($input)
+    {
+        $string = function ($key, $fallback) use ($input) {
+            return trim((string) $input->getString($key, $fallback));
+        };
+
+        $int = function ($key, $fallback) use ($input) {
+            return (int) $input->getInt($key, $fallback);
+        };
+
+        return [
+            'owner'           => $string('owner', 'owner'),
+            'repo'            => $string('repo', 'repo'),
+            'branch'          => self::sanitizeSlug($string('branch', 'stats-data'), 'stats-data'),
+            'jsonpath'        => self::sanitizePath($string('jsonpath', 'stats/downloads.json'), 'stats/downloads.json'),
+            'provider'        => self::sanitizeChoice($string('provider', 'raw'), self::PROVIDERS, 'raw'),
+            'charttype'       => self::sanitizeChoice($string('charttype', 'total-trend'), self::CHART_TYPES, 'total-trend'),
+            'theme'           => self::sanitizeChoice($string('theme', 'slate'), self::CHART_THEMES, 'slate'),
+            'width'           => self::clampInt($int('width', 1000), 640, 4096, 1000),
+            'height'          => self::clampInt($int('height', 360), 240, 2160, 360),
+            'zerobaseline'    => $int('zerobaseline', 1) > 0,
+            'yticks'          => self::clampInt($int('yticks', 6), 2, 12, 6),
+            'xlabeleverydays' => self::clampInt($int('xlabeleverydays', 0), 0, 365, 0),
+            'showvaluelabels' => $int('showvaluelabels', 0) > 0,
+            'datelabelformat' => self::sanitizeChoice($string('datelabelformat', 'yyyy-mm-dd'), self::CHART_DATE_LABEL_FORMATS, 'yyyy-mm-dd'),
+            'showgeneratedat' => $int('showgeneratedat', 1) > 0,
+            'titlemode'       => self::sanitizeChoice($string('titlemode', 'default'), self::CHART_TITLE_MODES, 'default'),
+            'titletext'       => mb_substr($string('titletext', ''), 0, 120),
+            'chartalt'        => mb_substr($string('chartalt', ''), 0, 200),
+            'chartdata'       => (string) $input->getString('chartdata', ''),
+        ];
     }
 
     /**
@@ -670,7 +1188,7 @@ class ModCurseforgeGeneratorHelper
         $owner    = $post->get('owner', '', 'STRING');
         $repo     = $post->get('repo', '', 'STRING');
         $branch   = $post->get('branch', '', 'STRING');
-        $jsonPath = $post->get('jsonpath', 'curseforge/downloads.json', 'STRING');
+        $jsonPath = $post->get('jsonpath', 'stats/downloads.json', 'STRING');
 
         // Badge fields
         $metric     = $post->get('metric', 'total|$.stats.total|0A7EA4|downloads/total', 'STRING');
@@ -680,18 +1198,29 @@ class ModCurseforgeGeneratorHelper
         $provider   = $post->get('provider', 'raw', 'STRING');
         $labelColor = $post->get('labelcolor', '', 'STRING');
         $logo       = $post->get('logo', '', 'STRING');
-        $cache      = $post->get('cache', '900', 'STRING');
+        $cache      = $post->get('cache', (string) self::DEFAULT_CACHE_SECONDS, 'STRING');
 
         // Chart fields
-        $chartType = self::sanitizeChoice($post->get('charttype', 'total-trend', 'STRING'), ['total-trend', 'daily', 'weekly', 'monthly', 'yearly'], 'total-trend');
-        $theme     = self::sanitizeChoice($post->get('theme', 'slate', 'STRING'), ['black', 'slate', 'orange'], 'slate');
-        $chartData = $post->get('chartdata', '', 'RAW');
+        $chartType   = $post->get('charttype', 'total-trend', 'STRING');
+        $theme       = $post->get('theme', 'slate', 'STRING');
+        $chartData   = $post->get('chartdata', '', 'RAW');
+        $width       = $post->get('width', '1000', 'STRING');
+        $height      = $post->get('height', '360', 'STRING');
+        $yTicks      = $post->get('yticks', '6', 'STRING');
+        $xLabelDays  = $post->get('xlabeleverydays', '0', 'STRING');
+        $dateFormat  = $post->get('datelabelformat', 'yyyy-mm-dd', 'STRING');
+        $titleMode   = $post->get('titlemode', 'default', 'STRING');
+        $titleText   = $post->get('titletext', '', 'STRING');
+        $chartAlt    = $post->get('chartalt', '', 'STRING');
+        $zeroBase    = $post->get('zerobaseline', '1', 'STRING');
+        $showValues  = $post->get('showvaluelabels', '0', 'STRING');
+        $showGen     = $post->get('showgeneratedat', '1', 'STRING');
 
         // Sanitize
         $owner    = self::sanitizeSlug($owner, 'OWNER');
         $repo     = self::sanitizeSlug($repo, 'REPOSITORY');
         $branch   = self::sanitizeSlug($branch, 'stats-data');
-        $jsonPath = self::sanitizePath($jsonPath, 'curseforge/downloads.json');
+        $jsonPath = self::sanitizePath($jsonPath, 'stats/downloads.json');
         $provider = self::sanitizeChoice($provider, self::PROVIDERS, 'raw');
         $style    = self::sanitizeChoice($style, self::BADGE_STYLES, 'flat-square');
         $labelColor = $labelColor !== '' ? self::sanitizeColor($labelColor, self::DEFAULT_LABEL_COLOR) : self::DEFAULT_LABEL_COLOR;
@@ -722,8 +1251,33 @@ class ModCurseforgeGeneratorHelper
         $shieldsMd   = '![' . $label . '](' . $shieldsUrl . ')';
 
         // Build chart
-        $chartUrl = self::buildChartUrl($owner, $repo, $chartType, $theme, $chartData, $color);
-        $chartMd  = '![Downloads ' . $chartType . ' ' . $theme . '](' . $chartUrl . ')';
+        $chartOptions = [
+            'owner'           => $owner,
+            'repo'            => $repo,
+            'branch'          => $branch,
+            'jsonpath'        => $jsonPath,
+            'provider'        => $provider,
+            'charttype'       => self::sanitizeChoice($chartType, self::CHART_TYPES, 'total-trend'),
+            'theme'           => self::sanitizeChoice($theme, self::CHART_THEMES, 'slate'),
+            'width'           => self::clampInt($width, 640, 4096, 1000),
+            'height'          => self::clampInt($height, 240, 2160, 360),
+            'zerobaseline'    => (bool) $zeroBase,
+            'yticks'          => self::clampInt($yTicks, 2, 12, 6),
+            'xlabeleverydays' => self::clampInt($xLabelDays, 0, 365, 0),
+            'showvaluelabels' => (bool) $showValues,
+            'datelabelformat' => self::sanitizeChoice($dateFormat, self::CHART_DATE_LABEL_FORMATS, 'yyyy-mm-dd'),
+            'showgeneratedat' => (bool) $showGen,
+            'titlemode'       => self::sanitizeChoice($titleMode, self::CHART_TITLE_MODES, 'default'),
+            'titletext'       => mb_substr(trim((string) $titleText), 0, 120),
+            'chartalt'        => mb_substr(trim((string) $chartAlt), 0, 200),
+            'chartdata'       => (string) $chartData,
+        ];
+
+        $chartUrl = self::buildChartUrl($owner, $repo, $chartOptions);
+        $chartAltText = $chartOptions['chartalt'] !== ''
+            ? $chartOptions['chartalt']
+            : $owner . '/' . $repo . ' downloads (' . $chartOptions['charttype'] . ')';
+        $chartMd  = '![' . $chartAltText . '](' . $chartUrl . ')';
 
         $response = [
             'success' => true,
@@ -737,8 +1291,8 @@ class ModCurseforgeGeneratorHelper
             'chart'   => [
                 'url'   => $chartUrl,
                 'md'    => $chartMd,
-                'type'  => $chartType,
-                'theme' => $theme,
+                'type'  => $chartOptions['charttype'],
+                'theme' => $chartOptions['theme'],
             ],
         ];
 
@@ -753,17 +1307,45 @@ class ModCurseforgeGeneratorHelper
         $app   = Factory::getApplication();
         $input = $app->getInput();
 
-        $chartType = self::sanitizeChoice($input->getCmd('charttype', 'total-trend'), ['total-trend', 'daily', 'weekly', 'monthly', 'yearly'], 'total-trend');
-        $theme     = self::sanitizeChoice($input->getCmd('theme', 'slate'), ['black', 'slate', 'orange'], 'slate');
-        $chartData = $input->getString('chartdata', '');
-        $color     = self::sanitizeColor($input->getString('color', ''), '0A7EA4');
-        $owner     = self::sanitizeSlug($input->getString('owner', ''), 'OWNER');
-        $repo      = self::sanitizeSlug($input->getString('repo', ''), 'REPOSITORY');
-
-        [$labels, $values] = self::aggregateChartData(self::parseChartData($chartData), $chartType);
+        $options = self::chartOptionsFromRequest($input);
 
         $app->setHeader('Content-Type', 'image/svg+xml; charset=utf-8', true);
 
-        return self::buildChartSvg($labels, $values, $theme, $color, $owner . '/' . $repo . ' release downloads');
+        $series = [];
+        $generatedAt = gmdate('Y-m-d\TH:i:s\Z');
+
+        if (trim($options['chartdata']) !== '') {
+            // Manual override wins over the published snapshots.
+            $series = self::normalizeSeries(self::parseChartData($options['chartdata']));
+        } else {
+            $data = self::fetchStats($options['provider'], $options['owner'], $options['repo'], $options['branch'], $options['jsonpath']);
+
+            if ($data !== null) {
+                $series = self::extractSeries($data);
+
+                if (isset($data['generatedAt']) && is_string($data['generatedAt']) && $data['generatedAt'] !== '') {
+                    $generatedAt = $data['generatedAt'];
+                }
+            }
+        }
+
+        return self::buildChartSvg($series, [
+            'owner'           => $options['owner'],
+            'repo'            => $options['repo'],
+            'generatedAt'     => $generatedAt,
+            'chartType'       => $options['charttype'],
+            'chartTheme'      => $options['theme'],
+            'width'           => $options['width'],
+            'height'          => $options['height'],
+            'zeroBaseline'    => $options['zerobaseline'],
+            'yTicks'          => $options['yticks'],
+            'xLabelEveryDays' => $options['xlabeleverydays'],
+            'showValueLabels' => $options['showvaluelabels'],
+            'dateLabelFormat' => $options['datelabelformat'],
+            'showGeneratedAt' => $options['showgeneratedat'],
+            'titleMode'       => $options['titlemode'],
+            'titleText'       => $options['titletext'],
+            'altText'         => $options['chartalt'],
+        ]);
     }
 }
