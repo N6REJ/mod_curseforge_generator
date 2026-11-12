@@ -3,7 +3,7 @@
   "owner": "N6REJ",
   "repo": "mod_curseforge_generator",
   "visibility": "public",
-  "generatedAt": "2026-11-11T03:50:29.772Z",
+  "generatedAt": "2026-11-12T04:57:49.730Z",
   "stats": {
     "total": 27,
     "day": 0,
@@ -17,9 +17,9 @@
   },
   "snapshots": {
     "windowDays": 180,
-    "count": 21,
+    "count": 22,
     "firstDate": "2026-10-22",
-    "lastDate": "2026-11-11",
+    "lastDate": "2026-11-12",
     "series": {
       "2026-10-22": 0,
       "2026-10-23": 11,
@@ -41,7 +41,8 @@
       "2026-11-08": 27,
       "2026-11-09": 27,
       "2026-11-10": 27,
-      "2026-11-11": 27
+      "2026-11-11": 27,
+      "2026-11-12": 27
     }
   },
   "profile": {
